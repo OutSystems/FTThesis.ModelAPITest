@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ModelAPITest": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\blo\\Documents\\WorkspaceVS\\ModelAPITest\\SimpleScreensTW.oml C:\\Users\\blo\\Documents\\WorkspaceVS\\ModelAPITest\\SimpleScreens2TW.oml"
+    }
+  }
+}
