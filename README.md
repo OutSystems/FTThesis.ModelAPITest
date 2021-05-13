@@ -13,7 +13,9 @@ In SimpleScreens2, Screen2 has one web block: WebBlock3
 
 You can use these files to test the program that lists all screens and all webblocks of an oml file.
 
-You can also use SimpleScreens and SimpleScreens2 to test the listing of new and altered elements
+You can also use SimpleScreens and SimpleScreens2 to test the listing of new and altered elements.
+
+This program now encapsulates WebBlock3 of Screen2 in a simple if.
 
 The current program is written for both **Traditional Web** and **Reactive**. Keep in mind that to list altereations and new elements, both omls must be in the same language
 
