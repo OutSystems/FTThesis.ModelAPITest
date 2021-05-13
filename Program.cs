@@ -62,7 +62,7 @@ namespace ModelAPITest
                 getDifScreensTrad(oldmodule, newmodule, "altered");
                 getDifBlocksTrad(oldmodule, newmodule, "new");
                 getDifBlocksTrad(oldmodule, newmodule, "altered");
-                insertIfTrad(newmodule);
+                //insertIfTrad(newmodule);
             }
             else
             {
@@ -74,9 +74,8 @@ namespace ModelAPITest
                 getDifScreensNR(oldmodule, newmodule, "altered");
                 getDifBlocksNR(oldmodule, newmodule, "new");
                 getDifBlocksNR(oldmodule, newmodule, "altered");
-                insertIfNR(newmodule);
+                //insertIfNR(newmodule);
             }
-            //insertIf(newmodule, isoldtraditional);
         }
 
         private static bool isTraditional(IESpace module)
@@ -217,6 +216,7 @@ namespace ModelAPITest
             var listNewBlocks = newe.GetAllDescendantsOfType<IWebBlock>();
 
             List<IWebBlock> difBlocks = new List<IWebBlock>();
+            List<IKey> difBlocksKeys = new List<IKey>();
 
             foreach (IWebBlock block in listNewBlocks)
             {
@@ -227,6 +227,7 @@ namespace ModelAPITest
                     if (oldb == default)
                     {
                         difBlocks.Add(block);
+                        difBlocksKeys.Add(block.ObjectKey);
                     }
                 }
                 else{
@@ -235,6 +236,7 @@ namespace ModelAPITest
                     if (oldb == default && oldb2!=default)
                     {
                         difBlocks.Add(block);
+                        difBlocksKeys.Add(block.ObjectKey);
                     }
                 }
             }
@@ -246,6 +248,9 @@ namespace ModelAPITest
             {
                 Console.WriteLine(block);
             }
+            Console.WriteLine($"Size DifBlocks: {difBlocksKeys.Count()}");
+            if(difBlocksKeys.Count()!=0){
+            insertIfTrad(newe, difBlocksKeys);}
             
         }
 
@@ -256,6 +261,7 @@ namespace ModelAPITest
             var listNewBlocks = newe.GetAllDescendantsOfType<IBlock>();
 
             List<IBlock> difBlocks = new List<IBlock>();
+            List<IKey> difBlocksKeys = new List<IKey>();
 
             foreach (IBlock block in listNewBlocks)
             {
@@ -267,6 +273,7 @@ namespace ModelAPITest
                     if (oldb == default)
                     {
                         difBlocks.Add(block);
+                        difBlocksKeys.Add(block.ObjectKey);
                     }
                 }
                 else
@@ -276,6 +283,7 @@ namespace ModelAPITest
                     if (oldb == default && oldb2 != default)
                     {
                         difBlocks.Add(block);
+                        difBlocksKeys.Add(block.ObjectKey);
                     }
                 }
             }
@@ -287,83 +295,65 @@ namespace ModelAPITest
             {
                 Console.WriteLine(block);
             }
-            
+
+            Console.WriteLine($"Size DifBlocks: {difBlocksKeys.Count()}");
+            if (difBlocksKeys.Count() != 0)
+            {
+                insertIfNR(newe, difBlocksKeys);
+            }
+
+        } 
+
+        private static void insertIfTrad(IESpace espace, List<IKey> blockskeys)
+        {
+            var bl = espace.GetAllDescendantsOfType<IWebBlockInstanceWidget>().Where(s => blockskeys.Contains(s.SourceBlock.ObjectKey));
+            foreach (IWebBlockInstanceWidget o in bl)
+            {
+                if (o.Parent is OutSystems.Model.UI.Web.Widgets.IPlaceholderContentWidget)
+                {
+                    var parent = (OutSystems.Model.UI.Web.Widgets.IPlaceholderContentWidget)o.Parent;
+                    var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
+                    instanceIf.SetCondition("True");
+                    instanceIf.Name = $"FT_{o.SourceBlock.Name}";
+                    var truebranch = (OutSystems.Model.UI.Web.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
+                    var trueblock = truebranch.CreateWidget<IWebBlockInstanceWidget>();
+                    trueblock.SourceBlock = o.SourceBlock;
+                    o.Delete();
+                }
+                else
+                {
+                    Console.WriteLine($"Bypass Block {o} because parent is not IPlaceholderContentWidget. Parent is {o.Parent}");
+                }
+                
+            }
+            espace.Save(@"C:\Users\blo\Desktop\SimpleScreensTranformed.oml");
         }
 
-        private static void insertIfTrad(IESpace espace)
+        private static void insertIfNR(IESpace espace, List<IKey> blockskeys)
         {
-            var screens = espace.GetAllDescendantsOfType<IWebScreen>();
-            foreach (IWebScreen sr in screens)
+            var bl = espace.GetAllDescendantsOfType<IMobileBlockInstanceWidget>().Where(s => blockskeys.Contains(s.SourceBlock.ObjectKey));
+            foreach (IMobileBlockInstanceWidget o in bl)
             {
-                if(sr.Name.Equals("WebScreen2"))
+                if (o.Parent is OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)
                 {
-                    var bl = sr.GetAllDescendantsOfType<IWebBlockInstanceWidget>();
-                    Console.WriteLine("\nInstanceWidgets:");
-                    foreach (IWebBlockInstanceWidget o in bl)
-                    {
-                        if(o.SourceBlock.Name == "WebBlock3")
-                        {
-                            if(o.Parent is OutSystems.Model.UI.Web.Widgets.IPlaceholderContentWidget)
-                            {
-                                var parent = (OutSystems.Model.UI.Web.Widgets.IPlaceholderContentWidget)o.Parent;
-                                var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
-                                instanceIf.SetCondition("True");
-                                instanceIf.Name = "FT_WebBlock3";
-                                var truebranch = (OutSystems.Model.UI.Web.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
-                                var trueblock = truebranch.CreateWidget<IWebBlockInstanceWidget>();
-                                trueblock.SourceBlock = o.SourceBlock;
-                                o.Delete(); 
-                            }
-                            else
-                            {
-                                Console.WriteLine("Bypass");
-                            }
-                        }
-                    }
-                    espace.Save(@"C:\Users\blo\Desktop\SimpleScreensTranformed.oml");
+                    var parent = (OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)o.Parent;
+                    var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
+                    instanceIf.SetCondition("True");
+                    instanceIf.Name = $"FT_{o.SourceBlock.Name}";
+                    var truebranch = (OutSystems.Model.UI.Mobile.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
+                    var trueblock = truebranch.CreateWidget<IMobileBlockInstanceWidget>();
+                    trueblock.SourceBlock = o.SourceBlock;
+                    o.Delete();
                 }
+                else
+                {
+                    Console.WriteLine($"Bypass Block {o} because parent is not IPlaceholderContentWidget. Parent is {o.Parent}");
+                } 
             }
+            espace.Save(@"C:\Users\blo\Desktop\SimpleScreensTranformedNR.oml");
         }
 
-        private static void insertIfNR(IESpace espace)
-        {
-            var screens = espace.GetAllDescendantsOfType<IScreen>();
-            
-            foreach (IScreen sr in screens)
-            {
-                if (sr.Name.Equals("Screen2"))
-                {
-                    var bl = sr.GetAllDescendantsOfType<IMobileBlockInstanceWidget>();
-                    Console.WriteLine("\nInstanceWidgets:");
-                    foreach (IMobileBlockInstanceWidget o in bl)
-                    {
-                        Console.WriteLine(o);
-                        Console.WriteLine(o.SourceBlock);
-                        if (o.SourceBlock.Name == "Block3")
-                        {
-                            if (o.Parent is OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)
-                            {
-                                var parent = (OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)o.Parent;
-                                var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
-                                instanceIf.SetCondition("True");
-                                instanceIf.Name = "FT_Block3";
-                                var truebranch = (OutSystems.Model.UI.Mobile.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
-                                var trueblock = truebranch.CreateWidget<IMobileBlockInstanceWidget>();
-                                trueblock.SourceBlock = o.SourceBlock;
-                                o.Delete();
-                            }
-                            else
-                            {
-                                Console.WriteLine("Bypass");
-                            }
-                        }
-                    }
-                    espace.Save(@"C:\Users\blo\Desktop\SimpleScreensTranformedNR.oml");
-                }
-            }
-        }
+
 
     }
-
-
 }
