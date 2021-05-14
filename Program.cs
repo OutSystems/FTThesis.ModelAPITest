@@ -100,7 +100,7 @@ namespace ModelAPITest
 
             foreach (IWebScreen screen in listScreens)
             {
-                Console.WriteLine(screen.Name);
+                Console.WriteLine(screen);
             }
 
             var listwebblocks = module.GetAllDescendantsOfType<IWebBlock>();
@@ -385,11 +385,22 @@ namespace ModelAPITest
             }
         }
 
+        
         private static void insertIfScreenTrad(IESpace espace, List<IKey> screenskeys)
         {
             var links = espace.GetAllDescendantsOfType<ILinkWidget>().Where(s => screenskeys.Contains(s.OnClick.Destination.ObjectKey));
-            foreach(ILinkWidget l in links)
+            var links2 = espace.GetAllDescendantsOfType<ILinkWidget>().Where(s => s.OnClick.Destination is IGoToDestination);
+            foreach(ILinkWidget link in links2)
             {
+                Console.WriteLine($"LINK: {link}");
+                var dest = (IGoToDestination)link.OnClick.Destination;
+                if(screenskeys.Contains(dest.Destination.ObjectKey)){
+                    links = links.Append(link);
+                }
+            }
+            foreach (ILinkWidget l in links)
+            {
+                Console.WriteLine(l);
                 if (l.Parent is IContainerWidget)
                 {
                     var parent = (IContainerWidget)l.Parent;
@@ -400,9 +411,19 @@ namespace ModelAPITest
                     truebranch.Copy(l);
                     l.Delete();
                 }
+                else if(l.Parent is OutSystems.Model.UI.Web.Widgets.IPlaceholderContentWidget)
+                {
+                    var parent = (OutSystems.Model.UI.Web.Widgets.IPlaceholderContentWidget)l.Parent;
+                    var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
+                    instanceIf.SetCondition("True");
+                    instanceIf.Name = $"FT_{l.OnClick.Destination.ToString()}";
+                    var truebranch = (OutSystems.Model.UI.Web.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
+                    truebranch.Copy(l);
+                    l.Delete();
+                }
                 else
                 {
-                    Console.WriteLine($"Bypass Block {l} because parent is not IPlaceholderContentWidget. Parent is {l.Parent}");
+                    Console.WriteLine($"Bypass Link {l} because parent is not IPlaceholderContentWidget or IContainerWidget. Parent is {l.Parent}");
                 }
             }
 
@@ -411,11 +432,24 @@ namespace ModelAPITest
         private static void insertIfScreenNR(IESpace espace, List<IKey> screenskeys)
         {
             var links = espace.GetAllDescendantsOfType<ILink>().Where(s => screenskeys.Contains(s.OnClick.Destination.ObjectKey));
+            
             foreach (ILink l in links)
             {
                 if (l.Parent is OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)
                 {
+                    Console.WriteLine($"Here1 link: {l}");
+                    Console.WriteLine($"Here1 linkT: {l.GetType()}");
                     var parent = (OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)l.Parent;
+                    var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
+                    instanceIf.SetCondition("True");
+                    instanceIf.Name = $"FT_{l.OnClick.Destination.ToString()}";
+                    var truebranch = (OutSystems.Model.UI.Mobile.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
+                    truebranch.Copy(l);
+                    l.Delete();
+                }
+                else if(l.Parent is OutSystems.Model.UI.Mobile.IContent)
+                {
+                    var parent = (OutSystems.Model.UI.Mobile.IContent)l.Parent;
                     var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
                     instanceIf.SetCondition("True");
                     instanceIf.Name = $"FT_{l.OnClick.Destination.ToString()}";
@@ -425,7 +459,7 @@ namespace ModelAPITest
                 }
                 else
                 {
-                    Console.WriteLine($"Bypass Block {l} because parent is not IPlaceholderContentWidget. Parent is {l.Parent}");
+                    Console.WriteLine($"Bypass Link {l.GetType()} because parent is not IPlaceholderContentWidget. Parent is {l.Parent.GetType()}");
                 }
             }
 
