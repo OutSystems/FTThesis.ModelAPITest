@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
+using OutSystems.Model;
+using OutSystems.Model.UI;
 using OutSystems.Model.UI.Web;
 using OutSystems.Model.UI.Web.Widgets;
-using OutSystems.Model.UI;
-using OutSystems.Model;
 using OutSystems.Model.UI.Mobile;
 using OutSystems.Model.UI.Mobile.Widgets;
+using ServiceStudio.Plugin.NRWidgets;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -62,7 +63,8 @@ namespace ModelAPITest
                 getDifScreensTrad(oldmodule, newmodule, "altered");
                 getDifBlocksTrad(oldmodule, newmodule, "new");
                 getDifBlocksTrad(oldmodule, newmodule, "altered");
-                //insertIfTrad(newmodule);
+                
+                newmodule.Save(@"C:\Users\blo\Desktop\SimpleScreensTranformed.oml");
             }
             else
             {
@@ -74,7 +76,8 @@ namespace ModelAPITest
                 getDifScreensNR(oldmodule, newmodule, "altered");
                 getDifBlocksNR(oldmodule, newmodule, "new");
                 getDifBlocksNR(oldmodule, newmodule, "altered");
-                //insertIfNR(newmodule);
+                
+                newmodule.Save(@"C:\Users\blo\Desktop\SimpleScreensTranformedNR.oml");
             }
         }
 
@@ -138,6 +141,7 @@ namespace ModelAPITest
             var listNewScreens = newe.GetAllDescendantsOfType<IWebScreen>();
 
             List<IWebScreen> difScreens = new List<IWebScreen>();
+            List<IKey> difScreensKeys = new List<IKey>();
 
             foreach (IWebScreen screen in listNewScreens)
             {
@@ -148,6 +152,7 @@ namespace ModelAPITest
                     if (olds == default)
                     {
                         difScreens.Add(screen);
+                        difScreensKeys.Add(screen.ObjectKey);
                     }
                 }
                 else {
@@ -156,6 +161,7 @@ namespace ModelAPITest
                     if (olds == default && olds2 != default)
                     {
                         difScreens.Add(screen);
+                        difScreensKeys.Add(screen.ObjectKey);
                     }
                 }
             }
@@ -167,6 +173,15 @@ namespace ModelAPITest
             {
                 Console.WriteLine(screen);
             }
+
+            if (newOrAltered.Equals("new"))
+            {
+                Console.WriteLine($"Size DifBlocks: {difScreensKeys.Count()}");
+                if (difScreensKeys.Count() != 0)
+                {
+                    insertIfScreenTrad(newe, difScreensKeys);
+                }
+            }
         }
 
         private static void getDifScreensNR(IESpace old, IESpace newe, String newOrAltered)
@@ -176,6 +191,7 @@ namespace ModelAPITest
             var listNewScreens = newe.GetAllDescendantsOfType<IScreen>();
 
             List<IScreen> difScreens = new List<IScreen>();
+            List<IKey> difScreensKeys = new List<IKey>();
 
             foreach (IScreen screen in listNewScreens)
             {
@@ -187,6 +203,7 @@ namespace ModelAPITest
                     if (olds == default)
                     {
                         difScreens.Add(screen);
+                        difScreensKeys.Add(screen.ObjectKey);
                     }
                 }
                 else
@@ -196,6 +213,7 @@ namespace ModelAPITest
                     if (olds == default && olds2 != default)
                     {
                         difScreens.Add(screen);
+                        difScreensKeys.Add(screen.ObjectKey);
                     }
                 }
             }
@@ -206,6 +224,15 @@ namespace ModelAPITest
             foreach (IScreen screen in difScreens)
             {
                 Console.WriteLine(screen);
+            }
+
+            if (newOrAltered.Equals("new"))
+            {
+                Console.WriteLine($"Size DifBlocks: {difScreensKeys.Count()}");
+                if (difScreensKeys.Count() != 0)
+                {
+                    insertIfScreenNR(newe, difScreensKeys);
+                }
             }
         }
 
@@ -248,9 +275,15 @@ namespace ModelAPITest
             {
                 Console.WriteLine(block);
             }
-            Console.WriteLine($"Size DifBlocks: {difBlocksKeys.Count()}");
-            if(difBlocksKeys.Count()!=0){
-            insertIfTrad(newe, difBlocksKeys);}
+
+            if (newOrAltered.Equals("new"))
+            {
+                Console.WriteLine($"Size DifBlocks: {difBlocksKeys.Count()}");
+                if (difBlocksKeys.Count() != 0)
+                {
+                    insertIfBlocksTrad(newe, difBlocksKeys);
+                }
+            }
             
         }
 
@@ -296,15 +329,18 @@ namespace ModelAPITest
                 Console.WriteLine(block);
             }
 
-            Console.WriteLine($"Size DifBlocks: {difBlocksKeys.Count()}");
-            if (difBlocksKeys.Count() != 0)
+            if (newOrAltered.Equals("new"))
             {
-                insertIfNR(newe, difBlocksKeys);
+                Console.WriteLine($"Size DifBlocks: {difBlocksKeys.Count()}");
+                if (difBlocksKeys.Count() != 0)
+                {
+                    insertIfBlocksNR(newe, difBlocksKeys);
+                }
             }
 
         } 
 
-        private static void insertIfTrad(IESpace espace, List<IKey> blockskeys)
+        private static void insertIfBlocksTrad(IESpace espace, List<IKey> blockskeys)
         {
             var bl = espace.GetAllDescendantsOfType<IWebBlockInstanceWidget>().Where(s => blockskeys.Contains(s.SourceBlock.ObjectKey));
             foreach (IWebBlockInstanceWidget o in bl)
@@ -316,20 +352,18 @@ namespace ModelAPITest
                     instanceIf.SetCondition("True");
                     instanceIf.Name = $"FT_{o.SourceBlock.Name}";
                     var truebranch = (OutSystems.Model.UI.Web.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
-                    var trueblock = truebranch.CreateWidget<IWebBlockInstanceWidget>();
-                    trueblock.SourceBlock = o.SourceBlock;
+                    truebranch.Copy(o);
                     o.Delete();
                 }
                 else
                 {
                     Console.WriteLine($"Bypass Block {o} because parent is not IPlaceholderContentWidget. Parent is {o.Parent}");
                 }
-                
+
             }
-            espace.Save(@"C:\Users\blo\Desktop\SimpleScreensTranformed.oml");
         }
 
-        private static void insertIfNR(IESpace espace, List<IKey> blockskeys)
+        private static void insertIfBlocksNR(IESpace espace, List<IKey> blockskeys)
         {
             var bl = espace.GetAllDescendantsOfType<IMobileBlockInstanceWidget>().Where(s => blockskeys.Contains(s.SourceBlock.ObjectKey));
             foreach (IMobileBlockInstanceWidget o in bl)
@@ -341,8 +375,7 @@ namespace ModelAPITest
                     instanceIf.SetCondition("True");
                     instanceIf.Name = $"FT_{o.SourceBlock.Name}";
                     var truebranch = (OutSystems.Model.UI.Mobile.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
-                    var trueblock = truebranch.CreateWidget<IMobileBlockInstanceWidget>();
-                    trueblock.SourceBlock = o.SourceBlock;
+                    truebranch.Copy(o);
                     o.Delete();
                 }
                 else
@@ -350,10 +383,53 @@ namespace ModelAPITest
                     Console.WriteLine($"Bypass Block {o} because parent is not IPlaceholderContentWidget. Parent is {o.Parent}");
                 } 
             }
-            espace.Save(@"C:\Users\blo\Desktop\SimpleScreensTranformedNR.oml");
         }
 
+        private static void insertIfScreenTrad(IESpace espace, List<IKey> screenskeys)
+        {
+            var links = espace.GetAllDescendantsOfType<ILinkWidget>().Where(s => screenskeys.Contains(s.OnClick.Destination.ObjectKey));
+            foreach(ILinkWidget l in links)
+            {
+                if (l.Parent is IContainerWidget)
+                {
+                    var parent = (IContainerWidget)l.Parent;
+                    var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
+                    instanceIf.SetCondition("True");
+                    instanceIf.Name = $"FT_{l.OnClick.Destination.ToString()}";
+                    var truebranch = (OutSystems.Model.UI.Web.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
+                    truebranch.Copy(l);
+                    l.Delete();
+                }
+                else
+                {
+                    Console.WriteLine($"Bypass Block {l} because parent is not IPlaceholderContentWidget. Parent is {l.Parent}");
+                }
+            }
 
+        }
+
+        private static void insertIfScreenNR(IESpace espace, List<IKey> screenskeys)
+        {
+            var links = espace.GetAllDescendantsOfType<ILink>().Where(s => screenskeys.Contains(s.OnClick.Destination.ObjectKey));
+            foreach (ILink l in links)
+            {
+                if (l.Parent is OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)
+                {
+                    var parent = (OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)l.Parent;
+                    var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
+                    instanceIf.SetCondition("True");
+                    instanceIf.Name = $"FT_{l.OnClick.Destination.ToString()}";
+                    var truebranch = (OutSystems.Model.UI.Mobile.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
+                    truebranch.Copy(l);
+                    l.Delete();
+                }
+                else
+                {
+                    Console.WriteLine($"Bypass Block {l} because parent is not IPlaceholderContentWidget. Parent is {l.Parent}");
+                }
+            }
+
+        }
 
     }
 }
