@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
 using OutSystems.Model;
+using OutSystems.Model.Logic.Nodes;
 using OutSystems.Model.UI;
 using OutSystems.Model.UI.Web;
 using OutSystems.Model.UI.Web.Widgets;
 using OutSystems.Model.UI.Mobile;
+using OutSystems.Model.UI.Mobile.Events;
 using OutSystems.Model.UI.Mobile.Widgets;
 using ServiceStudio.Plugin.NRWidgets;
 using System.Linq;
@@ -180,6 +182,7 @@ namespace ModelAPITest
                 if (difScreensKeys.Count() != 0)
                 {
                     insertIfScreenTrad(newe, difScreensKeys);
+                    insertIfScreenPrepTrad(newe, difScreensKeys);
                 }
             }
         }
@@ -232,6 +235,7 @@ namespace ModelAPITest
                 if (difScreensKeys.Count() != 0)
                 {
                     insertIfScreenNR(newe, difScreensKeys);
+                    insertIfScreenPrepNR(newe, difScreensKeys);
                 }
             }
         }
@@ -429,6 +433,27 @@ namespace ModelAPITest
 
         }
 
+        private static void insertIfScreenPrepTrad(IESpace espace, List<IKey> screenskeys)
+        {
+            var screens = espace.GetAllDescendantsOfType<IWebScreen>().Where(s => screenskeys.Contains(s.ObjectKey));
+            foreach (IWebScreen sc in screens)
+            {
+                Console.WriteLine(sc);
+                var preparation = sc.CreatePreparation();
+                var start = preparation.CreateNode<IStartNode>();
+                var ifToggle = preparation.CreateNode<IIfNode>().Below(start);
+                var end = preparation.CreateNode<IEndNode>().Below(ifToggle);
+
+                ifToggle.SetCondition("True");
+                ifToggle.TrueTarget = end;
+                start.Target = ifToggle;
+                var dest = preparation.CreateNode<IDestinationNode>().ToTheRightOf(ifToggle);
+                dest.Destination = espace.GetAllDescendantsOfType<IWebScreen>().Single(sr => sr.Name == "InvalidPermissions");
+                ifToggle.FalseTarget = dest;
+            }
+
+        }
+
         private static void insertIfScreenNR(IESpace espace, List<IKey> screenskeys)
         {
             var links = espace.GetAllDescendantsOfType<ILink>().Where(s => screenskeys.Contains(s.OnClick.Destination.ObjectKey));
@@ -461,6 +486,33 @@ namespace ModelAPITest
                 {
                     Console.WriteLine($"Bypass Link {l.GetType()} because parent is not IPlaceholderContentWidget. Parent is {l.Parent.GetType()}");
                 }
+            }
+
+        }
+
+        private static void insertIfScreenPrepNR(IESpace espace, List<IKey> screenskeys)
+        {
+
+           var screens = espace.GetAllDescendantsOfType<IMobileScreen>().Where(s => screenskeys.Contains(s.ObjectKey));
+            
+            foreach (IMobileScreen sc in screens)
+            {
+                
+                var oninit = sc.GetAllDescendantsOfType<IUILifeCycleEvent>().Single(e => e.GetType().ToString().Contains("OnInitialize"));
+                
+                var oninitaction = sc.CreateScreenAction();
+                oninitaction.Name = "OnInitialize";
+                var start = oninitaction.CreateNode<IStartNode>();
+                var ifToggle = oninitaction.CreateNode<IIfNode>().Below(start);
+                var end = oninitaction.CreateNode<IEndNode>().Below(ifToggle);
+
+                ifToggle.SetCondition("True");
+                ifToggle.TrueTarget = end;
+                start.Target = ifToggle;
+                var dest = oninitaction.CreateNode<IDestinationNode>().ToTheRightOf(ifToggle);
+                dest.Destination = espace.GetAllDescendantsOfType<IScreen>().Single(sr => sr.Name == "InvalidPermissions");
+                ifToggle.FalseTarget = dest;
+                oninit.Destination = oninitaction;
             }
 
         }
