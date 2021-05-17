@@ -84,6 +84,7 @@ namespace ModelAPITest
         }
 
         private static bool isTraditional(IESpace module)
+            
         {
             var themes = module.GetAllDescendantsOfType<IWebTheme>();
             bool any = false;
@@ -94,7 +95,9 @@ namespace ModelAPITest
             return any;
         }
 
-        private static void listTraditional(IESpace module) {
+        private static void listTraditional(IESpace module) 
+        //only for debugging and experimentation purposes, to be deleted
+        {
 
             var listScreens = module.GetAllDescendantsOfType<IWebScreen>();
 
@@ -115,7 +118,9 @@ namespace ModelAPITest
             }
         }
 
-        private static void listReactive(IESpace module) {
+        private static void listReactive(IESpace module)
+        //only for debugging and experimentation purposes, to be deleted
+        {
 
             var listScreens = module.GetAllDescendantsOfType<IScreen>();
 
@@ -136,7 +141,8 @@ namespace ModelAPITest
             }
         }
 
-        private static void getDifScreensTrad(IESpace old, IESpace newe, String newOrAltered) {
+        private static void getDifScreensTrad(IESpace old, IESpace newe, String newOrAltered) 
+        {
 
             var listOldScreens = old.GetAllDescendantsOfType<IWebScreen>();
 
