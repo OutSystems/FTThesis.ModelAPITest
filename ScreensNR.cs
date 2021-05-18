@@ -7,14 +7,13 @@ using ServiceStudio.Plugin.NRWidgets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ModelAPITest
 {
-    class ScreensTogglesNR : ElementToggles
+    
+    class ScreensNR : ElementToggle
     {
-
-        private void getDifElements(IESpace old, IESpace newe, String newOrAltered)
+        public void getDifElements(IESpace old, IESpace newe, string newOrAltered)
         {
             var listOldScreens = old.GetAllDescendantsOfType<IScreen>();
 
@@ -58,25 +57,22 @@ namespace ModelAPITest
 
             if (newOrAltered.Equals("new"))
             {
-                Console.WriteLine($"Size DifBlocks: {difScreensKeys.Count()}");
                 if (difScreensKeys.Count() != 0)
                 {
                     insertIf(newe, difScreensKeys);
-                    insertIfScreenPrep(newe, difScreensKeys);
+                    insertIfPrep(newe, difScreensKeys);
                 }
             }
         }
 
-        private void insertIf(IESpace espace, List<IKey> screenskeys)
+        public void insertIf(IESpace espace, List<IKey> keys)
         {
-            var links = espace.GetAllDescendantsOfType<ILink>().Where(s => screenskeys.Contains(s.OnClick.Destination.ObjectKey));
+            var links = espace.GetAllDescendantsOfType<ILink>().Where(s => keys.Contains(s.OnClick.Destination.ObjectKey));
 
             foreach (ILink l in links)
             {
                 if (l.Parent is OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)
                 {
-                    Console.WriteLine($"Here1 link: {l}");
-                    Console.WriteLine($"Here1 linkT: {l.GetType()}");
                     var parent = (OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)l.Parent;
                     var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
                     instanceIf.SetCondition("True");
@@ -100,10 +96,10 @@ namespace ModelAPITest
                     Console.WriteLine($"Bypass Link {l.GetType()} because parent is not IPlaceholderContentWidget. Parent is {l.Parent.GetType()}");
                 }
             }
-
         }
 
-        private static void insertIfScreenPrep(IESpace espace, List<IKey> screenskeys)
+
+        private static void insertIfPrep(IESpace espace, List<IKey> screenskeys)
         {
 
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>().Where(s => screenskeys.Contains(s.ObjectKey));
@@ -122,9 +118,10 @@ namespace ModelAPITest
                 ifToggle.SetCondition("True");
                 ifToggle.TrueTarget = end;
                 start.Target = ifToggle;
-                var dest = oninitaction.CreateNode<IDestinationNode>().ToTheRightOf(ifToggle);
-                dest.Destination = espace.GetAllDescendantsOfType<IScreen>().Single(sr => sr.Name == "InvalidPermissions");
-                ifToggle.FalseTarget = dest;
+                var excep = oninitaction.CreateNode<IRaiseExceptionNode>().ToTheRightOf(ifToggle);
+                excep.SetExceptionMessage("\"Screen not available\"");
+                excep.Exception = espace.GetAllDescendantsOfType<OutSystems.Model.Logic.IException>().Single(sr => sr.ToString().Contains("Abort Activity Change Exception"));
+                ifToggle.FalseTarget = excep;
                 oninit.Destination = oninitaction;
             }
 

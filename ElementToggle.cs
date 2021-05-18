@@ -5,11 +5,10 @@ using System.Text;
 
 namespace ModelAPITest
 {
-    interface ElementToggles
+    interface ElementToggle
     {
         void getDifElements(IESpace old, IESpace newe, String newOrAltered);
 
-        void insertIf(IESpace espace, List<IKey> screenskeys);
-
+        void insertIf(IESpace espace, List<IKey> keys);
     }
 }

@@ -9,12 +9,10 @@ using System.Text;
 
 namespace ModelAPITest
 {
-    class ScreensToggles : ElementToggles
+    class Screens : ElementToggle
     {
-
-        private void getDifElements(IESpace old, IESpace newe, String newOrAltered)
+        public void getDifElements(IESpace old, IESpace newe, String newOrAltered)
         {
-
             var listOldScreens = old.GetAllDescendantsOfType<IWebScreen>();
 
             var listNewScreens = newe.GetAllDescendantsOfType<IWebScreen>();
@@ -57,31 +55,28 @@ namespace ModelAPITest
 
             if (newOrAltered.Equals("new"))
             {
-                Console.WriteLine($"Size DifBlocks: {difScreensKeys.Count()}");
                 if (difScreensKeys.Count() != 0)
                 {
                     insertIf(newe, difScreensKeys);
-                    insertIfScreenPrep(newe, difScreensKeys);
+                    insertIfPrep(newe, difScreensKeys);
                 }
             }
         }
 
-        private void insertIf(IESpace espace, List<IKey> screenskeys)
+        public void insertIf(IESpace espace, List<IKey> keys)
         {
-            var links = espace.GetAllDescendantsOfType<ILinkWidget>().Where(s => screenskeys.Contains(s.OnClick.Destination.ObjectKey));
+            var links = espace.GetAllDescendantsOfType<ILinkWidget>().Where(s => keys.Contains(s.OnClick.Destination.ObjectKey));
             var links2 = espace.GetAllDescendantsOfType<ILinkWidget>().Where(s => s.OnClick.Destination is IGoToDestination);
             foreach (ILinkWidget link in links2)
             {
-                Console.WriteLine($"LINK: {link}");
                 var dest = (IGoToDestination)link.OnClick.Destination;
-                if (screenskeys.Contains(dest.Destination.ObjectKey))
+                if (keys.Contains(dest.Destination.ObjectKey))
                 {
                     links = links.Append(link);
                 }
             }
             foreach (ILinkWidget l in links)
             {
-                Console.WriteLine(l);
                 if (l.Parent is IContainerWidget)
                 {
                     var parent = (IContainerWidget)l.Parent;
@@ -107,15 +102,13 @@ namespace ModelAPITest
                     Console.WriteLine($"Bypass Link {l} because parent is not IPlaceholderContentWidget or IContainerWidget. Parent is {l.Parent}");
                 }
             }
-
         }
 
-        private static void insertIfScreenPrep(IESpace espace, List<IKey> screenskeys)
+        private static void insertIfPrep(IESpace espace, List<IKey> screenskeys)
         {
             var screens = espace.GetAllDescendantsOfType<IWebScreen>().Where(s => screenskeys.Contains(s.ObjectKey));
             foreach (IWebScreen sc in screens)
             {
-                Console.WriteLine(sc);
                 var preparation = sc.CreatePreparation();
                 var start = preparation.CreateNode<IStartNode>();
                 var ifToggle = preparation.CreateNode<IIfNode>().Below(start);
@@ -124,9 +117,10 @@ namespace ModelAPITest
                 ifToggle.SetCondition("True");
                 ifToggle.TrueTarget = end;
                 start.Target = ifToggle;
-                var dest = preparation.CreateNode<IDestinationNode>().ToTheRightOf(ifToggle);
-                dest.Destination = espace.GetAllDescendantsOfType<IWebScreen>().Single(sr => sr.Name == "InvalidPermissions");
-                ifToggle.FalseTarget = dest;
+                var excep = preparation.CreateNode<IRaiseExceptionNode>().ToTheRightOf(ifToggle);
+                excep.SetExceptionMessage("\"Screen not available\"");
+                excep.Exception = espace.GetAllDescendantsOfType<OutSystems.Model.Logic.IException>().Single(sr => sr.ToString().Contains("Abort Activity Change Exception"));
+                ifToggle.FalseTarget = excep;
             }
 
         }

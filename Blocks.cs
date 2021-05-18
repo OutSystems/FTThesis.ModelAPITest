@@ -1,7 +1,6 @@
 ﻿using OutSystems.Model;
-using OutSystems.Model.UI;
-using OutSystems.Model.UI.Mobile;
-using OutSystems.Model.UI.Mobile.Widgets;
+using OutSystems.Model.UI.Web;
+using OutSystems.Model.UI.Web.Widgets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,19 +8,18 @@ using System.Text;
 
 namespace ModelAPITest
 {
-    class BlocksTogglesNR : ElementToggles
+    class Blocks : ElementToggle
     {
-
-        private void getDifElements(IESpace old, IESpace newe, String newOrAltered)
+        public void getDifElements(IESpace old, IESpace newe, string newOrAltered)
         {
-            var listOldBlocks = old.GetAllDescendantsOfType<IBlock>();
+            var listOldBlocks = old.GetAllDescendantsOfType<IWebBlock>();
 
-            var listNewBlocks = newe.GetAllDescendantsOfType<IBlock>();
+            var listNewBlocks = newe.GetAllDescendantsOfType<IWebBlock>();
 
-            List<IBlock> difBlocks = new List<IBlock>();
+            List<IWebBlock> difBlocks = new List<IWebBlock>();
             List<IKey> difBlocksKeys = new List<IKey>();
 
-            foreach (IBlock block in listNewBlocks)
+            foreach (IWebBlock block in listNewBlocks)
             {
                 var bkey = block.ObjectKey;
                 var modDate = block.LastModifiedDate;
@@ -49,34 +47,33 @@ namespace ModelAPITest
             if (newOrAltered.Equals("new")) { Console.WriteLine("\nNew Blocks:"); }
             else if (newOrAltered.Equals("altered")) { Console.WriteLine("\nAltered Blocks:"); }
 
-            foreach (IBlock block in difBlocks)
+            foreach (IWebBlock block in difBlocks)
             {
                 Console.WriteLine(block);
             }
 
             if (newOrAltered.Equals("new"))
             {
-                Console.WriteLine($"Size DifBlocks: {difBlocksKeys.Count()}");
+                
                 if (difBlocksKeys.Count() != 0)
                 {
                     insertIf(newe, difBlocksKeys);
                 }
             }
-
         }
 
-        private void insertIf(IESpace espace, List<IKey> blockskeys)
+        public void insertIf(IESpace espace, List<IKey> keys)
         {
-            var bl = espace.GetAllDescendantsOfType<IMobileBlockInstanceWidget>().Where(s => blockskeys.Contains(s.SourceBlock.ObjectKey));
-            foreach (IMobileBlockInstanceWidget o in bl)
+            var bl = espace.GetAllDescendantsOfType<IWebBlockInstanceWidget>().Where(s => keys.Contains(s.SourceBlock.ObjectKey));
+            foreach (IWebBlockInstanceWidget o in bl)
             {
-                if (o.Parent is OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)
+                if (o.Parent is OutSystems.Model.UI.Web.Widgets.IPlaceholderContentWidget)
                 {
-                    var parent = (OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)o.Parent;
-                    var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
+                    var parent = (OutSystems.Model.UI.Web.Widgets.IPlaceholderContentWidget)o.Parent;
+                    var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
                     instanceIf.SetCondition("True");
                     instanceIf.Name = $"FT_{o.SourceBlock.Name}";
-                    var truebranch = (OutSystems.Model.UI.Mobile.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
+                    var truebranch = (OutSystems.Model.UI.Web.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
                     truebranch.Copy(o);
                     o.Delete();
                 }
@@ -84,8 +81,8 @@ namespace ModelAPITest
                 {
                     Console.WriteLine($"Bypass Block {o} because parent is not IPlaceholderContentWidget. Parent is {o.Parent}");
                 }
+
             }
         }
-
     }
 }
