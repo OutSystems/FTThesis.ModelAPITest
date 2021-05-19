@@ -24,7 +24,6 @@ namespace ModelAPITest
             //  Console.WriteLine("Usage: <File.oml>");
             //return;
             //}
-
             Console.WriteLine("Usage: <oldFile.oml>\n<newFile.oml>");
             var oldESpacePath = Console.ReadLine();
             var newESpacePath = Console.ReadLine();
