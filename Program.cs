@@ -43,8 +43,8 @@ namespace ModelAPITest
             var oldmodule = modelServices.LoadESpace(oldESpacePath);
             var newmodule = modelServices.LoadESpace(newESpacePath);
 
-            var isoldtraditional = isTraditional(oldmodule);
-            var isnewtraditional = isTraditional(newmodule);
+            var isoldtraditional = IsTraditional(oldmodule);
+            var isnewtraditional = IsTraditional(newmodule);
 
             if (isoldtraditional != isnewtraditional)
             {
@@ -54,23 +54,23 @@ namespace ModelAPITest
 
             if (isoldtraditional)
             {
-                Blocks b = new Blocks();
+                BlocksTraditional tradicionalBlocks = new BlocksTraditional();
                 Screens s = new Screens();
-                b.getDifElements(oldmodule, newmodule, "new");
-                s.getDifElements(oldmodule, newmodule, "new");
+                tradicionalBlocks.GetDiffElements(oldmodule, newmodule, "new");
+                s.GetDiffElements(oldmodule, newmodule, "new");
             }
             else
             {
-                BlocksNR b = new BlocksNR();
+                BlocksReative reactiveBlocks = new BlocksReative();
                 ScreensNR s = new ScreensNR();
-                b.getDifElements(oldmodule, newmodule, "new");
-                s.getDifElements(oldmodule, newmodule, "new");
+                reactiveBlocks.GetDiffElements(oldmodule, newmodule, "new");
+                s.GetDiffElements(oldmodule, newmodule, "new");
             }
             newmodule.Save(saveESpacePath.FullName);
             Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
         }
 
-        private static bool isTraditional(IESpace module)
+        private static bool IsTraditional(IESpace module)
             
         {
             var themes = module.GetAllDescendantsOfType<IWebTheme>();
@@ -82,49 +82,18 @@ namespace ModelAPITest
             return any;
         }
 
-        private static void listTraditional(IESpace module) 
+        private static void ListTraditional(IESpace module)
         //only for debugging and experimentation purposes, to be deleted
         {
-
-            var listScreens = module.GetAllDescendantsOfType<IWebScreen>();
-
-            Console.WriteLine("\nScreens:");
-
-            foreach (IWebScreen screen in listScreens)
-            {
-                Console.WriteLine(screen);
-            }
-
-            var listwebblocks = module.GetAllDescendantsOfType<IWebBlock>();
-
-            Console.WriteLine("\nWebBlocks:");
-
-            foreach (IWebBlock block in listwebblocks)
-            {
-                Console.WriteLine(block.Name);
-            }
+            BlocksTraditional tradicionalBlocks = new BlocksTraditional();
+            tradicionalBlocks.ListBlocksAndScreens(module);
         }
 
-        private static void listReactive(IESpace module)
+        private static void ListReactive(IESpace module)
         //only for debugging and experimentation purposes, to be deleted
         {
-            var listScreens = module.GetAllDescendantsOfType<IScreen>();
-
-            Console.WriteLine("\nScreens:");
-
-            foreach (IScreen screen in listScreens)
-            {
-                Console.WriteLine(screen);
-            }
-
-            var listwebblocks = module.GetAllDescendantsOfType<IBlock>();
-
-            Console.WriteLine("\nWebBlocks:");
-
-            foreach (IBlock block in listwebblocks)
-            {
-                Console.WriteLine(block);
-            }
+            BlocksReative reactiveBlocks = new BlocksReative();
+            reactiveBlocks.ListBlocksAndScreens(module);
         }
 
     }

@@ -13,7 +13,7 @@ namespace ModelAPITest
     
     class ScreensNR : ElementToggle
     {
-        public void getDifElements(IESpace old, IESpace newe, string newOrAltered)
+        public void GetDiffElements(IESpace old, IESpace newe, string newOrAltered)
         {
             var listOldScreens = old.GetAllDescendantsOfType<IScreen>();
 
@@ -59,13 +59,13 @@ namespace ModelAPITest
             {
                 if (difScreensKeys.Count() != 0)
                 {
-                    insertIf(newe, difScreensKeys);
+                    InsertIf(newe, difScreensKeys);
                     insertIfPrep(newe, difScreensKeys);
                 }
             }
         }
 
-        public void insertIf(IESpace espace, List<IKey> keys)
+        public void InsertIf(IESpace espace, List<IKey> keys)
         {
             var links = espace.GetAllDescendantsOfType<ILink>().Where(s => keys.Contains(s.OnClick.Destination.ObjectKey));
 

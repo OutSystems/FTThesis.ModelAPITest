@@ -11,7 +11,7 @@ namespace ModelAPITest
 {
     class Screens : ElementToggle
     {
-        public void getDifElements(IESpace old, IESpace newe, String newOrAltered)
+        public void GetDiffElements(IESpace old, IESpace newe, String newOrAltered)
         {
             var listOldScreens = old.GetAllDescendantsOfType<IWebScreen>();
 
@@ -57,13 +57,13 @@ namespace ModelAPITest
             {
                 if (difScreensKeys.Count() != 0)
                 {
-                    insertIf(newe, difScreensKeys);
+                    InsertIf(newe, difScreensKeys);
                     insertIfPrep(newe, difScreensKeys);
                 }
             }
         }
 
-        public void insertIf(IESpace espace, List<IKey> keys)
+        public void InsertIf(IESpace espace, List<IKey> keys)
         {
             var links = espace.GetAllDescendantsOfType<ILinkWidget>().Where(s => keys.Contains(s.OnClick.Destination.ObjectKey));
             var links2 = espace.GetAllDescendantsOfType<ILinkWidget>().Where(s => s.OnClick.Destination is IGoToDestination);

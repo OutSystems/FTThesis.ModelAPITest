@@ -7,8 +7,8 @@ namespace ModelAPITest
 {
     interface ElementToggle
     {
-        void getDifElements(IESpace old, IESpace newe, String newOrAltered);
+        void GetDiffElements(IESpace old, IESpace newe, String newOrAltered);
 
-        void insertIf(IESpace espace, List<IKey> keys);
+        void InsertIf(IESpace espace, List<IKey> keys);
     }
 }
