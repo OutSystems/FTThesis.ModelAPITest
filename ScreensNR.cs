@@ -2,6 +2,7 @@
 using OutSystems.Model.Logic.Nodes;
 using OutSystems.Model.UI;
 using OutSystems.Model.UI.Mobile;
+using OutSystems.Model.UI.Mobile.Widgets;
 using OutSystems.Model.UI.Mobile.Events;
 using ServiceStudio.Plugin.NRWidgets;
 using System;
@@ -10,98 +11,34 @@ using System.Linq;
 
 namespace ModelAPITest
 {
-    
-    class ScreensNR : ElementToggle
+
+    class ScreensNR : ScreensGeneric<ILink, IMobileScreen, IPlaceholderContentWidget, IContent>
     {
-        public void getDifElements(IESpace old, IESpace newe, string newOrAltered)
+        protected override IObjectSignature GetDestination(ILink l)
         {
-            var listOldScreens = old.GetAllDescendantsOfType<IScreen>();
-
-            var listNewScreens = newe.GetAllDescendantsOfType<IScreen>();
-
-            List<IScreen> difScreens = new List<IScreen>();
-            List<IKey> difScreensKeys = new List<IKey>();
-
-            foreach (IScreen screen in listNewScreens)
-            {
-                var skey = screen.ObjectKey;
-                var modDate = screen.LastModifiedDate;
-                if (newOrAltered.Equals("new"))
-                {
-                    var olds = listOldScreens.SingleOrDefault(s => (s.ObjectKey.Equals(skey)));
-                    if (olds == default)
-                    {
-                        difScreens.Add(screen);
-                        difScreensKeys.Add(screen.ObjectKey);
-                    }
-                }
-                else
-                {
-                    var olds = listOldScreens.SingleOrDefault(s => (s.ObjectKey.Equals(skey) && s.LastModifiedDate.Equals(modDate)));
-                    var olds2 = listOldScreens.SingleOrDefault(s => (s.ObjectKey.Equals(skey)));
-                    if (olds == default && olds2 != default)
-                    {
-                        difScreens.Add(screen);
-                        difScreensKeys.Add(screen.ObjectKey);
-                    }
-                }
-            }
-
-            if (newOrAltered.Equals("new")) { Console.WriteLine("\nNew Screens:"); }
-            else if (newOrAltered.Equals("altered")) { Console.WriteLine("\nAltered Screens:"); }
-
-            foreach (IScreen screen in difScreens)
-            {
-                Console.WriteLine(screen);
-            }
-
-            if (newOrAltered.Equals("new"))
-            {
-                if (difScreensKeys.Count() != 0)
-                {
-                    insertIf(newe, difScreensKeys);
-                    insertIfPrep(newe, difScreensKeys);
-                }
-            }
+            return l.OnClick.Destination;
         }
 
-        public void insertIf(IESpace espace, List<IKey> keys)
+        protected override void CreateIf(IPlaceholderContentWidget p, ILink l)
         {
-            var links = espace.GetAllDescendantsOfType<ILink>().Where(s => keys.Contains(s.OnClick.Destination.ObjectKey));
-
-            foreach (ILink l in links)
-            {
-                if (l.Parent is OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)
-                {
-                    var parent = (OutSystems.Model.UI.Mobile.Widgets.IPlaceholderContentWidget)l.Parent;
-                    var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
-                    instanceIf.SetCondition("True");
-                    instanceIf.Name = $"FT_{l.OnClick.Destination.ToString()}";
-                    var truebranch = (OutSystems.Model.UI.Mobile.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
-                    truebranch.Copy(l);
-                    l.Delete();
-                }
-                else if (l.Parent is OutSystems.Model.UI.Mobile.IContent)
-                {
-                    var parent = (OutSystems.Model.UI.Mobile.IContent)l.Parent;
-                    var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
-                    instanceIf.SetCondition("True");
-                    instanceIf.Name = $"FT_{l.OnClick.Destination.ToString()}";
-                    var truebranch = (OutSystems.Model.UI.Mobile.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
-                    truebranch.Copy(l);
-                    l.Delete();
-                }
-                else
-                {
-                    Console.WriteLine($"Bypass Link {l.GetType()} because parent is not IPlaceholderContentWidget. Parent is {l.Parent.GetType()}");
-                }
-            }
+            var instanceIf = p.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
+            instanceIf.SetCondition("True");
+            instanceIf.Name = $"FT_{l.OnClick.Destination.ToString()}";
+            instanceIf.TrueBranch.Copy(l);
+            l.Delete();
         }
 
-
-        private static void insertIfPrep(IESpace espace, List<IKey> screenskeys)
+        protected override void CreateIf2(IContent p, ILink l)
         {
+            var instanceIf = p.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
+            instanceIf.SetCondition("True");
+            instanceIf.Name = $"FT_{l.OnClick.Destination.ToString()}";
+            instanceIf.TrueBranch.Copy(l);
+            l.Delete();
+        }
 
+        protected override void CreateScreenPrep(IESpace espace, List<IKey> screenskeys)
+        {
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>().Where(s => screenskeys.Contains(s.ObjectKey));
 
             foreach (IMobileScreen sc in screens)
@@ -124,7 +61,11 @@ namespace ModelAPITest
                 ifToggle.FalseTarget = excep;
                 oninit.Destination = oninitaction;
             }
+        }
 
+        protected override IEnumerable<ILink> InsertIfplus(IESpace espace, List<IKey> keys, IEnumerable<ILink> links)
+        {
+            return links;
         }
     }
 }
