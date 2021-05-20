@@ -10,34 +10,34 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="SimpleScreens2NR.oml">
+    <None Update="TestFiles\SimpleScreens2NR.oml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SimpleScreens2TW.oml">
+    <None Update="TestFiles\SimpleScreens2TW.oml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SimpleScreens3NR.oml">
+    <None Update="TestFiles\SimpleScreens3NR.oml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SimpleScreens3TW.oml">
+    <None Update="TestFiles\SimpleScreens3TW.oml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SimpleScreens4NR.oml">
+    <None Update="TestFiles\SimpleScreens4NR.oml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SimpleScreens4TW.oml">
+    <None Update="TestFiles\SimpleScreens4TW.oml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SimpleScreens5NR.oml">
+    <None Update="TestFiles\SimpleScreens5NR.oml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SimpleScreens5TW.oml">
+    <None Update="TestFiles\SimpleScreens5TW.oml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SimpleScreensNR.oml">
+    <None Update="TestFiles\SimpleScreensNR.oml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SimpleScreensTW.oml">
+    <None Update="TestFiles\SimpleScreensTW.oml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
