@@ -2,16 +2,19 @@
 using OutSystems.Model.UI;
 using OutSystems.Model.UI.Web;
 using OutSystems.Model.UI.Web.Widgets;
+using OutSystems.Model.UI.Mobile.Widgets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace ModelAPITest {
-    abstract class BlocksGeneric<GBlock, GObjectSignature, GScreen> : ElementToggle
+    abstract class BlocksGeneric<GBlock, GObjectSignature, GScreen, GParent> : ElementToggle
         where GBlock : IBlock
         where GObjectSignature: IObjectSignature
-        where GScreen : IScreen {
+        where GScreen : IScreen
+        where GParent : IObjectSignature
+    {
 
         public virtual void GetDiffElements(IESpace old, IESpace newe, string newOrAltered) {
             var listOldBlocks = old.GetAllDescendantsOfType<GBlock>();
@@ -57,13 +60,9 @@ namespace ModelAPITest {
         public virtual void InsertIf(IESpace espace, List<IKey> keys) {
             var bl = espace.GetAllDescendantsOfType<GObjectSignature>().Where(s => keys.Contains(GetObjectKey(s)));
             foreach (GObjectSignature o in bl) {
-                if (o.Parent is OutSystems.Model.UI.Web.Widgets.IPlaceholderContentWidget) {
-                    var parent = (OutSystems.Model.UI.Web.Widgets.IPlaceholderContentWidget)o.Parent;
-                    var instanceIf = parent.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
-                    instanceIf.SetCondition("True");
-                    instanceIf.Name = $"FT_{GetName(o)}";
-                    var truebranch = (OutSystems.Model.UI.Web.Widgets.IIfBranchWidget)instanceIf.TrueBranch;
-                    truebranch.Copy(o);
+                if (o.Parent is GParent) {
+                    var parent = (GParent)o.Parent;
+                    CreateIf(parent, o);
                     o.Delete();
                 } else {
                     Console.WriteLine($"Bypass Block {o} because parent is not IPlaceholderContentWidget. Parent is {o.Parent}");
@@ -95,6 +94,8 @@ namespace ModelAPITest {
         }
 
         protected abstract string GetName(GObjectSignature o);
+
+        protected abstract void CreateIf(GParent p, GObjectSignature o);
 
         protected abstract IKey GetObjectKey(GObjectSignature s);
     }

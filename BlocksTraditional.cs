@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ModelAPITest
 {
-    class BlocksTraditional : BlocksGeneric<IWebBlock, IWebBlockInstanceWidget, IWebScreen>
+    class BlocksTraditional : BlocksGeneric<IWebBlock, IWebBlockInstanceWidget, IWebScreen, IPlaceholderContentWidget>
     {
         protected override IKey GetObjectKey(IWebBlockInstanceWidget s) {
             return s.SourceBlock.ObjectKey;
@@ -18,5 +18,12 @@ namespace ModelAPITest
             return o.SourceBlock.Name;
         }
 
+        protected override void CreateIf(IPlaceholderContentWidget p, IWebBlockInstanceWidget o)
+        {
+            var instanceIf = p.CreateWidget<IIfWidget>();
+            instanceIf.SetCondition("True");
+            instanceIf.Name = $"FT_{GetName(o)}";
+            instanceIf.TrueBranch.Copy(o);
+        }
     }
 }
