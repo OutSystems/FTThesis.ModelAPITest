@@ -15,7 +15,7 @@ You can use these files to test the program that lists all screens and all webbl
 
 You can also use SimpleScreens and SimpleScreens2 to test the listing of new and altered elements.
 
-This program now encapsulates all new and altered blocks in a simple if.
+This program now encapsulates all new blocks and screens (this last by encapsulating all links  redirecting to it and a preparation/oninitialize for the screen) in a simple if.
 
 The current program is written for both **Traditional Web** and **Reactive**. Keep in mind that to list altereations and new elements, both omls must be in the same language
 
