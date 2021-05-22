@@ -21,7 +21,7 @@ namespace ModelAPITest
         protected override void CreateIf(IPlaceholderContentWidget p, IWebBlockInstanceWidget o)
         {
             var instanceIf = p.CreateWidget<IIfWidget>();
-            instanceIf.SetCondition("True");
+            instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{GetName(o)})");
             instanceIf.Name = $"FT_{GetName(o)}";
             instanceIf.TrueBranch.Copy(o);
         }

@@ -1,5 +1,6 @@
 ﻿using OutSystems.Model;
 using OutSystems.Model.Logic.Nodes;
+using OutSystems.Model.UI;
 using OutSystems.Model.UI.Web;
 using OutSystems.Model.UI.Web.Widgets;
 using System;
@@ -19,8 +20,8 @@ namespace ModelAPITest
         protected override void CreateIf(IPlaceholderContentWidget p, ILinkWidget l)
         {
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
-            instanceIf.SetCondition("True");
-            instanceIf.Name = $"FT_{l.OnClick.Destination.ToString()}";
+            instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{GetDestinationName(l)})");
+            instanceIf.Name = $"FT_{GetDestinationName(l)}";
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
         }
@@ -28,8 +29,8 @@ namespace ModelAPITest
         protected override void CreateIf2(IContainerWidget p, ILinkWidget l)
         {
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
-            instanceIf.SetCondition("True");
-            instanceIf.Name = $"FT_{l.OnClick.Destination.ToString()}";
+            instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{GetDestinationName(l)})");
+            instanceIf.Name = $"FT_{GetDestinationName(l)}";
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
         }
@@ -91,6 +92,10 @@ namespace ModelAPITest
 
         }
 
-        
+        protected override String GetDestinationName(ILinkWidget l)
+        {
+            return l.OnClick.Destination.ToString().Split("(", 2)[0];
+            
+        }
     }
 }

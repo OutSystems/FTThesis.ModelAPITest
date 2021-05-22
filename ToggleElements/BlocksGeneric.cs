@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ModelAPITest.ToggleElements;
 
 namespace ModelAPITest {
     abstract class BlocksGeneric<GBlock, GObjectSignature, GScreen, GParent> : ElementToggle
@@ -59,9 +60,14 @@ namespace ModelAPITest {
 
         public virtual void InsertIf(IESpace espace, List<IKey> keys) {
             var bl = espace.GetAllDescendantsOfType<GObjectSignature>().Where(s => keys.Contains(GetObjectKey(s)));
+            ToggleEntities t = new ToggleEntities();
+            ToggleAction a = new ToggleAction();
+            var entity = t.GetTogglesEntity(espace);
+            var action = a.GetToggleAction(espace);
             foreach (GObjectSignature o in bl) {
                 if (o.Parent is GParent) {
                     var parent = (GParent)o.Parent;
+                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{GetName(o)}", $"FT_{GetName(o)}");
                     CreateIf(parent, o);
                     o.Delete();
                 } else {

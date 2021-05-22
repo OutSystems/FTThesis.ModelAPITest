@@ -1,4 +1,5 @@
-﻿using OutSystems.Model;
+﻿using ModelAPITest.ToggleElements;
+using OutSystems.Model;
 using OutSystems.Model.Logic.Nodes;
 using OutSystems.Model.UI;
 using OutSystems.Model.UI.Web;
@@ -69,17 +70,25 @@ namespace ModelAPITest
         public void InsertIf(IESpace espace, List<IKey> keys)
         {
             var links = espace.GetAllDescendantsOfType<GLink>().Where(s => keys.Contains(GetDestination(s).ObjectKey));
-            links = InsertIfplus(espace, keys, links); 
+            links = InsertIfplus(espace, keys, links);
+            ToggleEntities t = new ToggleEntities();
+            ToggleAction a = new ToggleAction(); 
+            var entity = t.GetTogglesEntity(espace);
+            var action = a.GetToggleAction(espace);
             foreach (GLink l in links)
             {
                 if (l.Parent is GParent1)
                 {
                     var parent = (GParent1)l.Parent;
+                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{GetDestinationName(l)}", $"FT_{GetDestinationName(l)}");
+                    
                     CreateIf(parent, l);
                 }
                 else if (l.Parent is GParent2)
                 {
                     var parent = (GParent2)l.Parent;
+                    var rec =t.CreateRecord(entity, $"FT_{espace.Name}_{GetDestinationName(l)}", $"FT_{GetDestinationName(l)}");
+                    
                     CreateIf2(parent, l);
                 }
                 else
@@ -96,6 +105,8 @@ namespace ModelAPITest
         protected abstract void CreateScreenPrep(IESpace espace, List<IKey> screenskeys);
 
         protected abstract IObjectSignature GetDestination(GLink l);
+
+        protected abstract String GetDestinationName(GLink l);
 
         protected abstract IEnumerable<GLink> InsertIfplus(IESpace espace, List<IKey> keys, IEnumerable<GLink> links);
     }

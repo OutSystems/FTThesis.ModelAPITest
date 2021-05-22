@@ -22,8 +22,8 @@ namespace ModelAPITest
         protected override void CreateIf(IPlaceholderContentWidget p, ILink l)
         {
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
-            instanceIf.SetCondition("True");
-            instanceIf.Name = $"FT_{l.OnClick.Destination.ToString()}";
+            instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{GetDestinationName(l)})");
+            instanceIf.Name = $"FT_{GetDestinationName(l)}";
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
         }
@@ -31,8 +31,8 @@ namespace ModelAPITest
         protected override void CreateIf2(IContent p, ILink l)
         {
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
-            instanceIf.SetCondition("True");
-            instanceIf.Name = $"FT_{l.OnClick.Destination.ToString()}";
+            instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{GetDestinationName(l)})");
+            instanceIf.Name = $"FT_{GetDestinationName(l)}";
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
         }
@@ -52,7 +52,7 @@ namespace ModelAPITest
                 var ifToggle = oninitaction.CreateNode<IIfNode>().Below(start);
                 var end = oninitaction.CreateNode<IEndNode>().Below(ifToggle);
 
-                ifToggle.SetCondition("True");
+                ifToggle.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{sc.Name})");
                 ifToggle.TrueTarget = end;
                 start.Target = ifToggle;
                 var excep = oninitaction.CreateNode<IRaiseExceptionNode>().ToTheRightOf(ifToggle);
@@ -66,6 +66,12 @@ namespace ModelAPITest
         protected override IEnumerable<ILink> InsertIfplus(IESpace espace, List<IKey> keys, IEnumerable<ILink> links)
         {
             return links;
+        }
+
+        protected override string GetDestinationName(ILink l)
+        {
+            var screen = (IScreen)l.OnClick.Destination;
+            return screen.Name;
         }
     }
 }

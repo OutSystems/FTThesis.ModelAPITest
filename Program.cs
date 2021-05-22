@@ -1,8 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using ModelAPITest.ToggleElements;
 using OutSystems.Model;
+using OutSystems.Model.Data;
+using OutSystems.Model.Logic;
 using OutSystems.Model.UI;
 using OutSystems.Model.UI.Web;
+using ServiceStudio;
 
 namespace ModelAPITest
 {
@@ -56,8 +61,21 @@ namespace ModelAPITest
             {
                 BlocksTraditional tradicionalBlocks = new BlocksTraditional();
                 Screens s = new Screens();
+                ToggleEntities t = new ToggleEntities();
+                ToggleAction a = new ToggleAction();
                 tradicionalBlocks.GetDiffElements(oldmodule, newmodule, "new");
                 s.GetDiffElements(oldmodule, newmodule, "new");
+                //var entity = t.GetTogglesEntity(newmodule);
+                //t.CreateRecord(entity, "FT_Block3", "Block3Visibility");
+                //var action = a.GetToggleAction(newmodule);
+                //Console.WriteLine(entity);
+                //Console.WriteLine(action);
+                /*var lib = newmodule.References.Single(a => a.Name == "FeatureToggle_Lib");
+                
+                foreach (IServerActionSignature r in lib.ServerActions)
+                {
+                    Console.WriteLine(r);
+                }*/
             }
             else
             {
