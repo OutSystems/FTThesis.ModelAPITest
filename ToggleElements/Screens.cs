@@ -45,7 +45,7 @@ namespace ModelAPITest
                 var ifToggle = preparation.CreateNode<IIfNode>().Below(start);
                 var end = preparation.CreateNode<IEndNode>().Below(ifToggle);
 
-                ifToggle.SetCondition("True");
+                ifToggle.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{sc.Name})");
                 ifToggle.TrueTarget = end;
                 start.Target = ifToggle;
                 var excep = preparation.CreateNode<IRaiseExceptionNode>().ToTheRightOf(ifToggle);
@@ -81,7 +81,7 @@ namespace ModelAPITest
                 var ifToggle = preparation.CreateNode<IIfNode>().Below(start);
                 var end = preparation.CreateNode<IEndNode>().Below(ifToggle);
 
-                ifToggle.SetCondition("True");
+                ifToggle.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{sc.Name})");
                 ifToggle.TrueTarget = end;
                 start.Target = ifToggle;
                 var excep = preparation.CreateNode<IRaiseExceptionNode>().ToTheRightOf(ifToggle);
