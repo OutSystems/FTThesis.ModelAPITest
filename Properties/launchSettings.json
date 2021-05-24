@@ -2,7 +2,7 @@
   "profiles": {
     "ModelAPITest": {
       "commandName": "Project",
-      "commandLineArgs": "TestFiles\\SimpleScreensTW.1.oml TestFiles\\SimpleScreens5TW.1.oml SimpleScreensTranformed.1.oml"
+      "commandLineArgs": "TestFiles\\SimpleScreensNR.1.oml TestFiles\\SimpleScreens5NR.1.oml SimpleScreensTranformedNR.1.oml"
     }
   }
 }

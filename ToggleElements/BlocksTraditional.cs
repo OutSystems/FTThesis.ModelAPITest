@@ -18,7 +18,7 @@ namespace ModelAPITest
             return o.SourceBlock.Name;
         }
 
-        protected override void CreateIf(IPlaceholderContentWidget p, IWebBlockInstanceWidget o)
+        protected override void CreateIf(IPlaceholderContentWidget p, IWebBlockInstanceWidget o, IESpace eSpace)
         {
             var instanceIf = p.CreateWidget<IIfWidget>();
             instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{GetName(o)})");

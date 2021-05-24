@@ -5,6 +5,7 @@ using System.Text;
 using OutSystems.Model;
 using OutSystems.Model.Logic;
 using OutSystems.Model.Logic.Nodes;
+using OutSystems.Model.UI.Web;
 
 namespace ModelAPITest.ToggleElements
 {
@@ -12,25 +13,44 @@ namespace ModelAPITest.ToggleElements
     {
         private const string TogglesEntity = "FeatureToggles";
 
-        public IServerAction GetToggleAction(IESpace espace)
+        public IAction GetToggleAction(IESpace espace)
         {
-            var action = (IServerAction)espace.ServerActions.SingleOrDefault(s => s.Name == "GetFTValue");
-            if (action == default)
+            
+            if (IsTraditional(espace))
             {
-                return CreateToggleAction(espace);
+                var action = (IServerAction)espace.ServerActions.SingleOrDefault(s => s.Name == "GetFTValue");
+                if (action == default)
+                {
+                    return CreateToggleAction(espace, true);
+                }
+                else
+                {
+                    return action;
+                }
             }
             else
             {
-                return action;
+                return null;
             }
         }
-        public IServerAction CreateToggleAction(IESpace espace)
+        public IAction CreateToggleAction(IESpace espace, Boolean isTrad)
         {
-            var action = espace.CreateServerAction("GetFTValue");
-            action.Function = true;
+           
+           
+                var action = espace.CreateServerAction("GetFTValue");
+                action.Function = true;
+                ConstructAction(espace, action);
+                return action;
+            
+           
+            
+        }
 
+        private void ConstructAction(IESpace espace, IAction action)
+        {
+           
             var ftType = action.CreateInputParameter("FTType");
-            ftType.DataType = espace.Entities.Single(s => s.Name == TogglesEntity).IdentifierType; 
+            ftType.DataType = espace.Entities.Single(s => s.Name == TogglesEntity).IdentifierType;
             ftType.IsMandatory = true;
             ftType.Description = "Feature Toggle Identifier";
 
@@ -57,8 +77,18 @@ namespace ModelAPITest.ToggleElements
 
             var end = action.CreateNode<IEndNode>().Below(assign);
             assign.Target = end;
+        }
 
-            return action;
+        private static bool IsTraditional(IESpace module)
+
+        {
+            var themes = module.GetAllDescendantsOfType<IWebTheme>();
+            bool any = false;
+            foreach (IWebTheme tm in themes)
+            {
+                any = true;
+            }
+            return any;
         }
     }
 }

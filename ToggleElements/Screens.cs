@@ -17,7 +17,7 @@ namespace ModelAPITest
             return l.OnClick.Destination;
         }
 
-        protected override void CreateIf(IPlaceholderContentWidget p, ILinkWidget l)
+        protected override void CreateIf(IPlaceholderContentWidget p, ILinkWidget l, IESpace espace)
         {
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
             instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{GetDestinationName(l)})");
@@ -26,7 +26,7 @@ namespace ModelAPITest
             l.Delete();
         }
 
-        protected override void CreateIf2(IContainerWidget p, ILinkWidget l)
+        protected override void CreateIf2(IContainerWidget p, ILinkWidget l, IESpace espace)
         {
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
             instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{GetDestinationName(l)})");

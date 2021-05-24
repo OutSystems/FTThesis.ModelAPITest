@@ -56,6 +56,7 @@ namespace ModelAPITest {
                     InsertIf(newe, difBlocksKeys);
                 }
             }
+           
         }
 
         public virtual void InsertIf(IESpace espace, List<IKey> keys) {
@@ -68,7 +69,7 @@ namespace ModelAPITest {
                 if (o.Parent is GParent) {
                     var parent = (GParent)o.Parent;
                     var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{GetName(o)}", $"FT_{GetName(o)}");
-                    CreateIf(parent, o);
+                    CreateIf(parent, o, espace);
                     o.Delete();
                 } else {
                     Console.WriteLine($"Bypass Block {o} because parent is not IPlaceholderContentWidget. Parent is {o.Parent}");
@@ -101,7 +102,7 @@ namespace ModelAPITest {
 
         protected abstract string GetName(GObjectSignature o);
 
-        protected abstract void CreateIf(GParent p, GObjectSignature o);
+        protected abstract void CreateIf(GParent p, GObjectSignature o, IESpace espace);
 
         protected abstract IKey GetObjectKey(GObjectSignature s);
     }
