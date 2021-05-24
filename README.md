@@ -3,22 +3,18 @@ Program for testing and exploring ModelAPI functionality, specially for Feature 
 
 ## Description
 
-Simple Screens OMLs are just plain blank applications with two screens: Screen1 and Screen2.
-
-Screen1 has two web blocks: WebBlock1 and WebBlock2.
-
-In SimpleScreens2, Screen2 has one web block: WebBlock3
+Simple Screens OMLs are just plain blank applications with a couple screens and WebBlocks.
 
 *SimpleScreensTW.oml* is for traditional web while *SimpleScreensNR.oml* is for React.
 
 You can use these files to test the program that lists all screens and all webblocks of an oml file.
 
-You can also use SimpleScreens and SimpleScreens2 to test the listing of new and altered elements.
+At current version, the Test Files working and more relevant are: SimpleScreensTW.1.oml and SimpleScreens5TW.1.oml for traditional, and SimpleScreensNR.1.oml and SimpleScreens5TW.1.oml for Reactive.
 
-This program now encapsulates all new blocks and screens (this last by encapsulating all links  redirecting to it and a preparation/oninitialize for the screen) in a simple if.
+This program now encapsulates all new blocks and screens (this last by encapsulating all links redirecting to it and a preparation/oninitialize for the screen) in a toggle, but it is onl working for Traditional. Previous version works with Reactive, but only encapsulates elements in a simple if ( if true ) instead of a toggle.
 
-The current program is written for both **Traditional Web** and **Reactive**. Keep in mind that to list altereations and new elements, both omls must be in the same language
+The current program is written for both **Traditional Web** and **Reactive**. Keep in mind that both omls must be in the same language
 
 ## Running
 
-For running, execute the program and then insert the desired file paths in the console for both versions of the program.
+For running, execute the program and then insert the desired file paths for both versions of the program, as well as the path for the output file.
