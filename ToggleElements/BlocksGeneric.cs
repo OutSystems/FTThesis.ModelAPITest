@@ -65,17 +65,19 @@ namespace ModelAPITest {
             ToggleAction a = new ToggleAction();
             var entity = t.GetTogglesEntity(espace);
             var action = a.GetToggleAction(espace);
-            foreach (GObjectSignature o in bl) {
+            foreach (GObjectSignature o in bl.ToList()) {
                 if (o.Parent is GParent) {
                     var parent = (GParent)o.Parent;
                     var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{GetName(o)}", $"FT_{GetName(o)}");
                     CreateIf(parent, o, espace);
                     o.Delete();
+                   
                 } else {
                     Console.WriteLine($"Bypass Block {o} because parent is not IPlaceholderContentWidget. Parent is {o.Parent}");
                 }
 
             }
+            
         }
 
         /// <summary>

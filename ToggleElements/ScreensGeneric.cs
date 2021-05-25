@@ -75,7 +75,7 @@ namespace ModelAPITest
             ToggleAction a = new ToggleAction(); 
             var entity = t.GetTogglesEntity(espace);
             var action = a.GetToggleAction(espace);
-            foreach (GLink l in links)
+            foreach (GLink l in links.ToList())
             {
                 if (l.Parent is GParent1)
                 {
