@@ -21,7 +21,7 @@ namespace ModelAPITest
         {
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
             instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{GetDestinationName(l)})");
-            instanceIf.Name = $"FT_{GetDestinationName(l)}";
+            instanceIf.Name = $"If_FT_{GetDestinationName(l)}";
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
         }
@@ -30,7 +30,7 @@ namespace ModelAPITest
         {
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
             instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{GetDestinationName(l)})");
-            instanceIf.Name = $"FT_{GetDestinationName(l)}";
+            instanceIf.Name = $"If_FT_{GetDestinationName(l)}";
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
         }
@@ -71,7 +71,7 @@ namespace ModelAPITest
             
         }
 
-        private static void insertIfPrep(IESpace espace, List<IKey> screenskeys)
+        /*private static void insertIfPrep(IESpace espace, List<IKey> screenskeys)
         {
             var screens = espace.GetAllDescendantsOfType<IWebScreen>().Where(s => screenskeys.Contains(s.ObjectKey));
             foreach (IWebScreen sc in screens)
@@ -90,7 +90,7 @@ namespace ModelAPITest
                 ifToggle.FalseTarget = excep;
             }
 
-        }
+        }*/
 
         protected override String GetDestinationName(ILinkWidget l)
         {

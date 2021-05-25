@@ -32,9 +32,7 @@ namespace ModelAPITest {
                 var exists = s.GetAllDescendantsOfType<IMobileBlockInstanceWidget>().SingleOrDefault(k => k.ObjectKey.Equals(o.ObjectKey));
                 if (exists != default)
                 {
-                    Console.WriteLine(name);
                     var localvar = s.CreateLocalVariable($"FT_{name}");
-                    Console.WriteLine($"VARNAME: {localvar.Name}");
                     localvar.DataType = espace.BooleanType;
                     var oninit = s.GetAllDescendantsOfType<IUILifeCycleEvent>().Single(e => e.GetType().ToString().Contains("OnInitialize"));
                     IScreenAction action = (IScreenAction)oninit.Destination;
@@ -81,7 +79,7 @@ namespace ModelAPITest {
             }
             var instanceIf = p.CreateWidget<IIfWidget>();
             instanceIf.SetCondition($"FT_{name}");
-            instanceIf.Name = $"FT_{name}";
+            instanceIf.Name = $"If_FT_{name}";
             instanceIf.TrueBranch.Copy(o);
         }
     }

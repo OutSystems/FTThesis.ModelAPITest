@@ -30,9 +30,7 @@ namespace ModelAPITest
                 var exists = s.GetAllDescendantsOfType<ILink>().SingleOrDefault(k => k.ObjectKey.Equals(l.ObjectKey));
                 if (exists != default)
                 {
-                    Console.WriteLine(name);
                     var localvar = s.CreateLocalVariable($"FT_{name}");
-                    Console.WriteLine(localvar.Name);
                     localvar.DataType = espace.BooleanType;
                     CreateOnInitializeScreen(espace, false, s, l);
                 }
@@ -44,16 +42,14 @@ namespace ModelAPITest
                 var exists = s.GetAllDescendantsOfType<ILink>().SingleOrDefault(k => k.ObjectKey.Equals(l.ObjectKey));
                 if (exists != default)
                 {
-                    Console.WriteLine(name);
                     var localvar = s.CreateLocalVariable($"FT_{name}");
-                    Console.WriteLine(localvar.Name);
                     localvar.DataType = espace.BooleanType;
                     CreateOnInitializeBlock(espace, false, s, l);
                 }
             }
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
             instanceIf.SetCondition($"FT_{name}");
-            instanceIf.Name = $"FT_{name}";
+            instanceIf.Name = $"If_FT_{name}";
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
         }
@@ -67,9 +63,7 @@ namespace ModelAPITest
                 var exists = s.GetAllDescendantsOfType<ILink>().SingleOrDefault(k => k.ObjectKey.Equals(l.ObjectKey));
                 if (exists != default)
                 {
-                    Console.WriteLine(name);
                     var localvar = s.CreateLocalVariable($"FT_{name}");
-                    Console.WriteLine(localvar.Name);
                     localvar.DataType = espace.BooleanType;
                     CreateOnInitializeScreen(espace, false, s, l);
                 }
@@ -80,16 +74,14 @@ namespace ModelAPITest
                 var exists = s.GetAllDescendantsOfType<ILink>().SingleOrDefault(k => k.ObjectKey.Equals(l.ObjectKey));
                 if (exists != default)
                 {
-                    Console.WriteLine(name);
                     var localvar = s.CreateLocalVariable($"FT_{name}");
-                    Console.WriteLine(localvar.Name);
                     localvar.DataType = espace.BooleanType;
                     CreateOnInitializeBlock(espace, false, s, l);
                 }
             }
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
             instanceIf.SetCondition($"FT_{name}");
-            instanceIf.Name = $"FT_{name}";
+            instanceIf.Name = $"If_FT_{name}";
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
         }

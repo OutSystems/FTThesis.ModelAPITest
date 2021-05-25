@@ -22,7 +22,7 @@ namespace ModelAPITest
         {
             var instanceIf = p.CreateWidget<IIfWidget>();
             instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{GetName(o)})");
-            instanceIf.Name = $"FT_{GetName(o)}";
+            instanceIf.Name = $"If_FT_{GetName(o)}";
             instanceIf.TrueBranch.Copy(o);
         }
     }
