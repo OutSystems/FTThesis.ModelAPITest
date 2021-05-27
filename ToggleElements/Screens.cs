@@ -20,7 +20,7 @@ namespace ModelAPITest
         protected override void CreateIf(IPlaceholderContentWidget p, ILinkWidget l, IESpace espace)
         {
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
-            instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{GetDestinationName(l)})");
+            instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{espace.Name}_{GetDestinationName(l)})");
             instanceIf.Name = $"If_FT_{GetDestinationName(l)}";
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
@@ -29,7 +29,7 @@ namespace ModelAPITest
         protected override void CreateIf2(IContainerWidget p, ILinkWidget l, IESpace espace)
         {
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Web.Widgets.IIfWidget>();
-            instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{GetDestinationName(l)})");
+            instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{espace.Name}_{GetDestinationName(l)})");
             instanceIf.Name = $"If_FT_{GetDestinationName(l)}";
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
@@ -45,7 +45,7 @@ namespace ModelAPITest
                 var ifToggle = preparation.CreateNode<IIfNode>().Below(start);
                 var end = preparation.CreateNode<IEndNode>().Below(ifToggle);
 
-                ifToggle.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{sc.Name})");
+                ifToggle.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{espace.Name}_{sc.Name})");
                 ifToggle.TrueTarget = end;
                 start.Target = ifToggle;
                 var excep = preparation.CreateNode<IRaiseExceptionNode>().ToTheRightOf(ifToggle);
@@ -94,7 +94,7 @@ namespace ModelAPITest
 
         protected override String GetDestinationName(ILinkWidget l)
         {
-            return l.OnClick.Destination.ToString().Split("(", 2)[0];
+            return l.OnClick.Destination.ToString().Split(" (", 2)[0];
             
         }
     }
