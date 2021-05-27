@@ -45,12 +45,12 @@ namespace ModelAPITest.ToggleElements
         {
             IEntityAttribute GetAttribute(string name) => entity.Attributes.Single(a => a.Name == name);
             var rec = entity.Records;
-            var exists = rec.SingleOrDefault(s => s.ToString().Contains(label));
+            var exists = rec.SingleOrDefault(s => s.ToString().Contains(key));
             
             if (exists == default)
             {
                 var record = entity.CreateRecord();
-                record.Identifier = label;
+                record.Identifier = key;
                 var keyatt = GetAttribute("Key");
                 record.SetAttributeValue(keyatt, $"\"{key}\"");
                 var labelatt = GetAttribute("Label");
