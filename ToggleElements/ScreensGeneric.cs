@@ -66,6 +66,24 @@ namespace ModelAPITest
                 }
             }
         }
+        public virtual void GetAllElements(IESpace newe) {
+
+            var listScreens = newe.GetAllDescendantsOfType<GScreen>();
+
+            List<IKey> screensKeys = new List<IKey>();
+            Console.WriteLine("Screens:");
+            foreach (GScreens screen in listScreens) {
+                Console.WriteLine(screen);
+                difBlocksKeys.Add(screen.ObjectKey);
+                    
+            }
+            
+            if (screensKeys.Count() != 0) {
+                InsertIf(newe, screensKeys);
+                 CreateScreenPrep(newe, screensKeys);
+            }
+
+        }
 
         public void InsertIf(IESpace espace, List<IKey> keys)
         {

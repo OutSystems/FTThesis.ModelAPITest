@@ -59,6 +59,24 @@ namespace ModelAPITest {
            
         }
 
+        public virtual void GetAllElements(IESpace newe) {
+
+            var listBlocks = newe.GetAllDescendantsOfType<GBlock>();
+
+            List<IKey> difBlocksKeys = new List<IKey>();
+            Console.WriteLine("Blocks:");
+            foreach (GBlock block in listBlocks) {
+                Console.WriteLine(block);
+                difBlocksKeys.Add(block.ObjectKey);
+                    
+            }
+            
+            if (difBlocksKeys.Count() != 0) {
+                InsertIf(newe, difBlocksKeys);
+            }
+
+        }
+
         public virtual void InsertIf(IESpace espace, List<IKey> keys) {
             var bl = espace.GetAllDescendantsOfType<GObjectSignature>().Where(s => keys.Contains(GetObjectKey(s)));
             ToggleEntities t = new ToggleEntities();
