@@ -17,7 +17,7 @@ namespace ModelAPITest
 
         static void Main(string[] args)
         {
-            if (args[0] != "diff" || args[0] != "all")
+            if (args[0] != "diff" && args[0] != "all")
             {
                 Console.WriteLine("Usage: \nall <File.oml> <outputFile.oml> \nOR \ndiff <oldFile.oml> <newFile.oml> <outputFile.oml>");
                 return;
@@ -34,13 +34,15 @@ namespace ModelAPITest
             }
 
             if (args[0] == "diff" & args.Length == 4)
-            {;
-                RunDifferential.RunForDiffElements(args)
+            {
+                RunDifferential.RunForDiffElements(args);
             }
 
             if (args[0] == "all" & args.Length == 3)
             {
                 RunAll.RunForAllElements(args);
+
+                
             }
 
 

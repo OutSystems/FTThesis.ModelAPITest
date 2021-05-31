@@ -1,5 +1,6 @@
 ﻿using OutSystems.Model;
 using OutSystems.Model.UI.Web;
+using ServiceStudio.Plugin.REST;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,6 +29,8 @@ namespace ModelAPITest
 
             var modelServices = OutSystems.ModelAPILoader.Loader.ModelServicesInstance;
 
+            var restServices = modelServices.GetPluginService<IRestPluginService>();
+
             var module = modelServices.LoadESpace(ESpacePath);
 
             var isoldtraditional = IsTraditional(module);
@@ -38,6 +41,7 @@ namespace ModelAPITest
                 Screens s = new Screens();
                 traditionalBlocks.GetAllElements(module);
                 s.GetAllElements(module);
+                
 
             }
             else
@@ -46,6 +50,7 @@ namespace ModelAPITest
                 ScreensNR s = new ScreensNR();
                 reactiveBlocks.GetAllElements(module);
                 s.GetAllElements(module);
+               
 
             }
             module.Save(saveESpacePath.FullName);

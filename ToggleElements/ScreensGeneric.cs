@@ -72,9 +72,9 @@ namespace ModelAPITest
 
             List<IKey> screensKeys = new List<IKey>();
             Console.WriteLine("Screens:");
-            foreach (GScreens screen in listScreens) {
+            foreach (GScreen screen in listScreens) {
                 Console.WriteLine(screen);
-                difBlocksKeys.Add(screen.ObjectKey);
+                screensKeys.Add(screen.ObjectKey);
                     
             }
             
