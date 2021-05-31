@@ -43,7 +43,7 @@ namespace ModelAPITest {
                     {
                         var oninitaction = s.CreateDataAction();
                         oninitaction.Name = "GetToggles";
-                        var out1 = action.GetAllDescendantsOfType<IOutputParameter>().SingleOrDefault(o => o.Name == "Out1");
+                        var out1 = oninitaction.GetAllDescendantsOfType<IOutputParameter>().SingleOrDefault(o => o.Name == "Out1");
                         out1.Delete();
                         var outputparam = oninitaction.CreateOutputParameter($"FT_{name}");
                         outputparam.DataType = espace.BooleanType;
