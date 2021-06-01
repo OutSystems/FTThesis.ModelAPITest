@@ -21,7 +21,7 @@ namespace ModelAPITest.ToggleElements
                 var action = (IServerAction)espace.ServerActions.SingleOrDefault(s => s.Name == "GetFTValue");
                 if (action == default)
                 {
-                    return CreateToggleAction(espace, true);
+                    return CreateToggleAction(espace);
                 }
                 else
                 {
@@ -33,7 +33,7 @@ namespace ModelAPITest.ToggleElements
                 return null;
             }
         }
-        public IAction CreateToggleAction(IESpace espace, Boolean isTrad)
+        public IAction CreateToggleAction(IESpace espace)
         {
            
            

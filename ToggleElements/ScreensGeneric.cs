@@ -15,6 +15,26 @@ namespace ModelAPITest
         where GParent1 : IObjectSignature
         where GParent2 : IObjectSignature
     {
+        public void GetAllElements(IESpace newe)
+        {
+            var listScreens = newe.GetAllDescendantsOfType<GScreen>();
+
+            List<IKey> screensKeys = new List<IKey>();
+            Console.WriteLine("Screens:");
+            foreach (GScreen screen in listScreens)
+            {
+                Console.WriteLine(screen);
+                screensKeys.Add(screen.ObjectKey);
+
+            }
+
+            if (screensKeys.Count() != 0)
+            {
+                InsertIf(newe, screensKeys);
+                CreateScreenPrep(newe, screensKeys);
+            }
+        }
+
         public void GetDiffElements(IESpace old, IESpace newe, string newOrAltered)
         {
             var listOldScreens = old.GetAllDescendantsOfType<GScreen>();
@@ -80,14 +100,14 @@ namespace ModelAPITest
                 if (l.Parent is GParent1)
                 {
                     var parent = (GParent1)l.Parent;
-                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{GetDestinationName(l)}", $"FT_{GetDestinationName(l)}");
+                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{GetDestinationName(l)}", $"FT_{GetDestinationName(l)}", espace);
                     
                     CreateIf(parent, l, espace);
                 }
                 else if (l.Parent is GParent2)
                 {
                     var parent = (GParent2)l.Parent;
-                    var rec =t.CreateRecord(entity, $"FT_{espace.Name}_{GetDestinationName(l)}", $"FT_{GetDestinationName(l)}");
+                    var rec =t.CreateRecord(entity, $"FT_{espace.Name}_{GetDestinationName(l)}", $"FT_{GetDestinationName(l)}", espace);
                     
                     CreateIf2(parent, l, espace);
                 }

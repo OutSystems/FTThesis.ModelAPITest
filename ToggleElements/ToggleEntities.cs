@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using OutSystems.Model;
 using OutSystems.Model.Data;
+using ServiceStudio.Plugin.REST;
 
 namespace ModelAPITest.ToggleElements
 {
@@ -41,7 +42,7 @@ namespace ModelAPITest.ToggleElements
             return entity;
         }
 
-        public IRecord CreateRecord(IStaticEntity entity, String key, String label)
+        public IRecord CreateRecord(IStaticEntity entity, String key, String label, IESpace espace)
         {
             IEntityAttribute GetAttribute(string name) => entity.Attributes.Single(a => a.Name == name);
             var rec = entity.Records;
@@ -59,6 +60,14 @@ namespace ModelAPITest.ToggleElements
             }
 
             return null;
+        }
+
+        public void CreateToggleInPlatform(String key, String label, IESpace espace)
+        {
+            var api = espace.GetAllDescendantsOfType<IRestClient>().Single(c => c.Name == "FeatureToggleAPI");
+            var method = api.GetAllDescendantsOfType<IRestAction>().Single(a => a.Name == "EV_FeatureToggle_CreateOrUpdate");
+
+
         }
     }
 }

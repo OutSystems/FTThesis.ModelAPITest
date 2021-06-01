@@ -9,6 +9,8 @@ namespace ModelAPITest
     {
         void GetDiffElements(IESpace old, IESpace newe, String newOrAltered);
 
+        void GetAllElements(IESpace newe);
+
         void InsertIf(IESpace espace, List<IKey> keys);
     }
 }

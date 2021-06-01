@@ -17,67 +17,34 @@ namespace ModelAPITest
 
         static void Main(string[] args)
         {
-            if (args.Length != 3)
+            if (args[0] != "diff" && args[0] != "all")
             {
-                Console.WriteLine("Usage: <oldFile.oml> <newFile.oml> <outputFile.oml>");
+                Console.WriteLine("Usage: \nall <File.oml> <outputFile.oml> \nOR \ndiff <oldFile.oml> <newFile.oml> <outputFile.oml>");
+                return;
+            }
+            if (args[0] == "diff" & args.Length != 4)
+            {
+                Console.WriteLine("Usage: diff <oldFile.oml> <newFile.oml> <outputFile.oml>");
+                return;
+            }
+            if (args[0] == "all" & args.Length != 3)
+            {
+                Console.WriteLine("Usage: all <File.oml> <outputFile.oml>");
                 return;
             }
 
-            var oldESpacePath = args[0];
-            var newESpacePath = args[1];
-
-            if (!File.Exists(oldESpacePath))
+            if (args[0] == "diff" & args.Length == 4)
             {
-                Console.WriteLine($"File {oldESpacePath} not found");
-                return;
-            }
-            if (!File.Exists(newESpacePath))
-            {
-                Console.WriteLine($"File {newESpacePath} not found");
-                return;
+                RunDiff.RunForDiffElements(args);
             }
 
-            var saveESpacePath = new FileInfo(args[2]);
-            var outputDirectory = saveESpacePath.Directory.FullName;
-            if (!Directory.Exists(outputDirectory))
+            if (args[0] == "all" & args.Length == 3)
             {
-                Directory.CreateDirectory(outputDirectory);
+                RunAll.RunForAllElements(args);
+
+
             }
 
-            var modelServices = OutSystems.ModelAPILoader.Loader.ModelServicesInstance;
-
-            var oldmodule = modelServices.LoadESpace(oldESpacePath);
-            var newmodule = modelServices.LoadESpace(newESpacePath);
-
-            var isoldtraditional = IsTraditional(oldmodule);
-            var isnewtraditional = IsTraditional(newmodule);
-
-            if (isoldtraditional != isnewtraditional)
-            {
-                Console.WriteLine("<oldFile.oml> and <newFile.oml> are not compatible");
-                return;
-            }
-
-            if (isoldtraditional)
-            {
-                BlocksTraditional tradicionalBlocks = new BlocksTraditional();
-                Screens s = new Screens();
-                //ToggleEntities t = new ToggleEntities();
-                //ToggleAction a = new ToggleAction();
-                tradicionalBlocks.GetDiffElements(oldmodule, newmodule, "new");
-                s.GetDiffElements(oldmodule, newmodule, "new");
-                
-            }
-            else
-            {
-                BlocksReative reactiveBlocks = new BlocksReative();
-                ScreensNR s = new ScreensNR();
-                reactiveBlocks.GetDiffElements(oldmodule, newmodule, "new");
-                s.GetDiffElements(oldmodule, newmodule, "new");
-
-            }
-            newmodule.Save(saveESpacePath.FullName);
-            Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
         }
 
         private static bool IsTraditional(IESpace module)

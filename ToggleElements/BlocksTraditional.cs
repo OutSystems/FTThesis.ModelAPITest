@@ -1,4 +1,5 @@
-﻿using OutSystems.Model;
+﻿using ModelAPITest.ToggleElements;
+using OutSystems.Model;
 using OutSystems.Model.UI.Web;
 using OutSystems.Model.UI.Web.Widgets;
 using System;
@@ -20,6 +21,8 @@ namespace ModelAPITest
 
         protected override void CreateIf(IPlaceholderContentWidget p, IWebBlockInstanceWidget o, IESpace eSpace)
         {
+            ToggleAction a = new ToggleAction();
+            var action = a.GetToggleAction(eSpace);
             var instanceIf = p.CreateWidget<IIfWidget>();
             instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{eSpace.Name}_{GetName(o)})");
             instanceIf.Name = $"If_FT_{GetName(o)}";

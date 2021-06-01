@@ -68,7 +68,7 @@ namespace ModelAPITest {
             foreach (GObjectSignature o in bl.ToList()) {
                 if (o.Parent is GParent) {
                     var parent = (GParent)o.Parent;
-                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{GetName(o)}", $"FT_{GetName(o)}");
+                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{GetName(o)}", $"FT_{GetName(o)}", espace);
                     CreateIf(parent, o, espace);
                     o.Delete();
                    
@@ -107,5 +107,24 @@ namespace ModelAPITest {
         protected abstract void CreateIf(GParent p, GObjectSignature o, IESpace espace);
 
         protected abstract IKey GetObjectKey(GObjectSignature s);
+
+        public void GetAllElements(IESpace newe)
+        {
+            var listBlocks = newe.GetAllDescendantsOfType<GBlock>();
+
+            List<IKey> difBlocksKeys = new List<IKey>();
+            Console.WriteLine("Blocks:");
+            foreach (GBlock block in listBlocks)
+            {
+                Console.WriteLine(block);
+                difBlocksKeys.Add(block.ObjectKey);
+
+            }
+
+            if (difBlocksKeys.Count() != 0)
+            {
+                InsertIf(newe, difBlocksKeys);
+            }
+        }
     }
 }
