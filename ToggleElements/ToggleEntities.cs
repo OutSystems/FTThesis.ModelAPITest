@@ -59,7 +59,7 @@ namespace ModelAPITest.ToggleElements
                 return record;
             }
 
-            return null;
+            return exists;
         }
 
         public void CreateToggleInPlatform(String key, String label, IESpace espace)

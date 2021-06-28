@@ -8,15 +8,15 @@ using System.Text;
 
 namespace ModelAPITest.ToggleElements
 {
-    class ServerAction : ElementToggle
+    class ClientAction : ElementToggle
     {
         public void GetAllElements(IESpace newe)
         {
-            var listactions = newe.GetAllDescendantsOfType<IServerAction>();
+            var listactions = newe.GetAllDescendantsOfType<IClientAction>();
 
             List<IKey> actionKeys = new List<IKey>();
-            Console.WriteLine("Server Actions:");
-            foreach (IServerAction action in listactions.ToList())
+            Console.WriteLine("Client Actions:");
+            foreach (IClientAction action in listactions)
             {
                 Console.WriteLine(action);
                 actionKeys.Add(action.ObjectKey);
@@ -29,39 +29,36 @@ namespace ModelAPITest.ToggleElements
             }
         }
 
-        public void GetDiffElements(IESpace old, IESpace newe, String newOrAltered)
+        public void GetDiffElements(IESpace old, IESpace newe, string newOrAltered)
         {
-            var listOldServerActions = old.GetAllDescendantsOfType<IServerAction>();
+            var listOldClientActions = old.GetAllDescendantsOfType<IClientAction>();
 
-            var listNewServerActions = newe.GetAllDescendantsOfType<IServerAction>();
+            var listNewClientActions = newe.GetAllDescendantsOfType<IClientAction>();
 
-            List<IServerAction> difActions = new List<IServerAction>();
+            List<IClientAction> difActions = new List<IClientAction>();
             List<IKey> difActionKeys = new List<IKey>();
 
-            foreach (IServerAction actions in listNewServerActions)
+            foreach (IClientAction actions in listNewClientActions)
             {
-                if (actions.Name != "GetFTValue")
+                var skey = actions.ObjectKey;
+                var modDate = ((IFlow)actions).LastModifiedDate;
+                if (newOrAltered.Equals("new"))
                 {
-                    var skey = actions.ObjectKey;
-                    var modDate = ((IFlow)actions).LastModifiedDate;
-                    if (newOrAltered.Equals("new"))
+                    var olds = listOldClientActions.SingleOrDefault(s => (s.ObjectKey.Equals(skey)));
+                    if (olds == null)
                     {
-                        var olds = listOldServerActions.SingleOrDefault(s => (s.ObjectKey.Equals(skey)));
-                        if (olds == null)
-                        {
-                            difActions.Add(actions);
-                            difActionKeys.Add(actions.ObjectKey);
-                        }
+                        difActions.Add(actions);
+                        difActionKeys.Add(actions.ObjectKey);
                     }
-                    else
+                }
+                else
+                {
+                    var olds = listOldClientActions.SingleOrDefault(s => (s.ObjectKey.Equals(skey) && ((IFlow)s).LastModifiedDate.Equals(modDate)));
+                    var olds2 = listOldClientActions.SingleOrDefault(s => (s.ObjectKey.Equals(skey)));
+                    if (olds == null && olds2 != null)
                     {
-                        var olds = listOldServerActions.SingleOrDefault(s => (s.ObjectKey.Equals(skey) && ((IFlow)s).LastModifiedDate.Equals(modDate)));
-                        var olds2 = listOldServerActions.SingleOrDefault(s => (s.ObjectKey.Equals(skey)));
-                        if (olds == null && olds2 != null)
-                        {
-                            difActions.Add(actions);
-                            difActionKeys.Add(actions.ObjectKey);
-                        }
+                        difActions.Add(actions);
+                        difActionKeys.Add(actions.ObjectKey);
                     }
                 }
             }
@@ -69,7 +66,7 @@ namespace ModelAPITest.ToggleElements
             if (newOrAltered.Equals("new")) { Console.WriteLine("\nNew Actions:"); }
             else if (newOrAltered.Equals("altered")) { Console.WriteLine("\nAltered Actions:"); }
 
-            foreach (IServerAction actions in difActions)
+            foreach (IClientAction actions in difActions)
             {
                 Console.WriteLine(actions);
             }
@@ -84,7 +81,7 @@ namespace ModelAPITest.ToggleElements
             }
         }
 
-        public virtual void InsertIf(IESpace espace, List<IKey> keys)
+        public void InsertIf(IESpace espace, List<IKey> keys)
         {
             var actions = espace.GetAllDescendantsOfType<IAction>().Where(s => keys.Contains(s.ObjectKey));
             ToggleEntities t = new ToggleEntities();
@@ -141,15 +138,14 @@ namespace ModelAPITest.ToggleElements
                     {
                         assign.CreateAssignment(o.Name, $"{doAction.Name}.{o.Name}");
                     }
+
                     doAction.Target = assign;
                     assign.Target = end;
                 }
 
-
             }
 
         }
-        
-    }
 
+    }
 }

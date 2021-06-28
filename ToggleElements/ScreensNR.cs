@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OutSystems.Model.Logic;
 using OutSystems.Model.Types;
+using ModelAPITest.ToggleElements;
 
 namespace ModelAPITest
 {
@@ -80,15 +81,14 @@ namespace ModelAPITest
 
         protected override void CreateScreenPrep(IESpace espace, List<IKey> screenskeys)
         {
-            var screens = espace.GetAllDescendantsOfType<IMobileScreen>().Where(s => screenskeys.Contains(s.ObjectKey));
+            ToggleEntities t = new ToggleEntities();
+            var entity = t.GetTogglesEntity(espace);
 
-            //var lib = espace.References.Single(a => a.Name == "FeatureToggle_Lib");
-            //var getToggleAction = (IServerActionSignature)lib.ServerActions.Single(a => a.Name == "FeatureToggle_IsOn");
-            //var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
-            //var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
+            var screens = espace.GetAllDescendantsOfType<IMobileScreen>().Where(s => screenskeys.Contains(s.ObjectKey));
 
             foreach (IMobileScreen sc in screens)
             {
+                var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{sc.Name}", $"FT_{sc.Name}", espace);
                 var dataaction = CreateDataActionScreen(espace, sc, null);
                 var ongetdata = sc.GetAllDescendantsOfType<IUILifeCycleEvent>().Single(e => e.GetType().ToString().Contains("OnAfterFetch"));
                 IScreenAction action = (IScreenAction)ongetdata.Destination;

@@ -29,8 +29,6 @@ namespace ModelAPITest
 
             var modelServices = OutSystems.ModelAPILoader.Loader.ModelServicesInstance;
 
-            //var restServices = modelServices.GetPluginService<IRestPluginService>();
-
             var module = modelServices.LoadESpace(ESpacePath);
 
             var isoldtraditional = IsTraditional(module);
@@ -49,10 +47,11 @@ namespace ModelAPITest
                 BlocksReative reactiveBlocks = new BlocksReative();
                 ScreensNR s = new ScreensNR();
                 ServerAction l = new ServerAction();
+                //ClientAction c = new ClientAction();
                 reactiveBlocks.GetAllElements(module);
                 s.GetAllElements(module);
                 l.GetAllElements(module);
-
+                //c.GetAllElements(module);
 
             }
             module.Save(saveESpacePath.FullName);

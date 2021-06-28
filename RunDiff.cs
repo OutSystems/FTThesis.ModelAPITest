@@ -63,9 +63,11 @@ namespace ModelAPITest
                 BlocksReative reactiveBlocks = new BlocksReative();
                 ScreensNR s = new ScreensNR();
                 ServerAction l = new ServerAction();
+                //ClientAction c = new ClientAction();
                 reactiveBlocks.GetDiffElements(oldmodule, newmodule, "new");
                 s.GetDiffElements(oldmodule, newmodule, "new");
                 l.GetDiffElements(oldmodule, newmodule, "new");
+                //c.GetAllElements(oldmodule, newmodule, "new");
             }
 
             newmodule.Save(saveESpacePath.FullName);
