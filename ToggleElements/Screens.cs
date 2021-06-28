@@ -1,4 +1,5 @@
-﻿using OutSystems.Model;
+﻿using ModelAPITest.ToggleElements;
+using OutSystems.Model;
 using OutSystems.Model.Logic.Nodes;
 using OutSystems.Model.UI;
 using OutSystems.Model.UI.Web;
@@ -37,9 +38,13 @@ namespace ModelAPITest
 
         protected override void CreateScreenPrep(IESpace espace, List<IKey> screenskeys)
         {
+            ToggleEntities t = new ToggleEntities();
+            var entity = t.GetTogglesEntity(espace);
+            
             var screens = espace.GetAllDescendantsOfType<IWebScreen>().Where(s => screenskeys.Contains(s.ObjectKey));
             foreach (IWebScreen sc in screens)
             {
+                var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{sc.Name}", $"FT_{sc.Name}", espace);
                 var preparation = sc.CreatePreparation();
                 var start = preparation.CreateNode<IStartNode>();
                 var ifToggle = preparation.CreateNode<IIfNode>().Below(start);

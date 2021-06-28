@@ -41,8 +41,6 @@ namespace ModelAPITest
             if (args[0] == "all" & args.Length == 3)
             {
                 RunAll.RunForAllElements(args);
-
-
             }
 
         }

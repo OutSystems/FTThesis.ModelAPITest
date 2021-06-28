@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OutSystems.Model.Logic;
 using OutSystems.Model.Types;
+using ModelAPITest.ToggleElements;
 
 namespace ModelAPITest
 {
@@ -80,6 +81,9 @@ namespace ModelAPITest
 
         protected override void CreateScreenPrep(IESpace espace, List<IKey> screenskeys)
         {
+            ToggleEntities t = new ToggleEntities();
+            var entity = t.GetTogglesEntity(espace);
+
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>().Where(s => screenskeys.Contains(s.ObjectKey));
 
             //var lib = espace.References.Single(a => a.Name == "FeatureToggle_Lib");
@@ -89,6 +93,7 @@ namespace ModelAPITest
 
             foreach (IMobileScreen sc in screens)
             {
+                var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{sc.Name}", $"FT_{sc.Name}", espace);
                 var dataaction = CreateDataActionScreen(espace, sc, null);
                 var ongetdata = sc.GetAllDescendantsOfType<IUILifeCycleEvent>().Single(e => e.GetType().ToString().Contains("OnAfterFetch"));
                 IScreenAction action = (IScreenAction)ongetdata.Destination;
