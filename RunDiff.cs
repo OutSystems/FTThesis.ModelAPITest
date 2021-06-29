@@ -67,7 +67,7 @@ namespace ModelAPITest
                 reactiveBlocks.GetDiffElements(oldmodule, newmodule, "new");
                 s.GetDiffElements(oldmodule, newmodule, "new");
                 l.GetDiffElements(oldmodule, newmodule, "new");
-                //c.GetAllElements(oldmodule, newmodule, "new");
+                //c.GetDiffElements(oldmodule, newmodule, "new");
             }
 
             newmodule.Save(saveESpacePath.FullName);
