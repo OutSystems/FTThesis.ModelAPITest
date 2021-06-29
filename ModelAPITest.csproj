@@ -7,9 +7,13 @@
 
   <ItemGroup>
     <PackageReference Include="OutSystems.ModelAPI" Version="11.50.6.41415" />
+    <PackageReference Include="YamlDotNet" Version="11.2.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestFiles\features.yml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestFiles\SimpleScreens2NR.oml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

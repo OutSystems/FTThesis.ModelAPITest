@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ModelAPITest.ToggleElements;
@@ -9,15 +10,35 @@ using OutSystems.Model.UI;
 using OutSystems.Model.UI.Mobile.Widgets;
 using OutSystems.Model.UI.Web;
 using ServiceStudio;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace ModelAPITest
 {
+    
     class Program
     {
 
         static void Main(string[] args)
         {
-            if (args[0] != "diff" && args[0] != "all")
+            string contents = File.ReadAllText(@"TestFiles\features.yml");
+
+            var deserializer = new DeserializerBuilder()
+                .WithNamingConvention(UnderscoredNamingConvention.Instance)  // see height_in_inches in sample yml 
+                .Build();
+
+            //yml contains a string containing your YAML
+            var p = deserializer.Deserialize<FeatureSet>(contents);
+            foreach(Feature f in p.Features)
+            {
+                Console.WriteLine($"Feature: {f.Name}, Elements:");
+                foreach(String e in f.Elements)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+
+            /*if (args[0] != "diff" && args[0] != "all")
             {
                 Console.WriteLine("Usage: \nall <File.oml> <outputFile.oml> \nOR \ndiff <oldFile.oml> <newFile.oml> <outputFile.oml>");
                 return;
@@ -41,7 +62,7 @@ namespace ModelAPITest
             if (args[0] == "all" & args.Length == 3)
             {
                 RunAll.RunForAllElements(args);
-            }
+            }*/
 
         }
 
