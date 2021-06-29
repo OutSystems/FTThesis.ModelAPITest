@@ -96,10 +96,11 @@ namespace ModelAPITest.ToggleElements
             foreach (IAction sa in actions.ToList())
             {
                 var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{sa.Name}", $"FT_{sa.Name}", espace);
-                var newAction = (IAction)espace.Copy(sa);
+                var newAction = (IServerAction)espace.Copy(sa);
                 var oldname = sa.Name.ToString();
                 sa.Name = $"FT_{oldname}";
                 newAction.Name = oldname;
+                newAction.Public = false;
                 var nodes = sa.Nodes;
                 foreach (IActionNode n in nodes.ToList())
                 {

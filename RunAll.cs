@@ -53,7 +53,7 @@ namespace ModelAPITest
                 reactiveBlocks.GetAllElements(module);
                 s.GetAllElements(module);
                 l.GetAllElements(module);
-                //c.GetDiffElements(oldmodule, newmodule, "new");
+                //c.GetAllElements(module);
                 ToggleRemoteAction t = new ToggleRemoteAction();
                 t.GetToggleAction(module);
 
