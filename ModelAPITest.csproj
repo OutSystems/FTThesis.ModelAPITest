@@ -14,6 +14,18 @@
     <None Update="CurrentTF\features.yml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="CurrentTF\featuresNR.yml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="CurrentTF\SimpleScreensNR.1.oml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="CurrentTF\SimpleScreensNR.2.oml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="CurrentTF\SimpleScreensNR.oml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="CurrentTF\SimpleScreensTW.1.oml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

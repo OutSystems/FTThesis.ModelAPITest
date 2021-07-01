@@ -67,20 +67,24 @@ namespace ModelAPITest {
                     }
                     else
                     {
-                        var outputparam = action.CreateOutputParameter($"FT_{feature}");
-                        outputparam.DataType = espace.BooleanType;
-                        var start = action.GetAllDescendantsOfType<IStartNode>().Single();
-                        var assign = action.GetAllDescendantsOfType<IAssignNode>().Single();
-                        var getToggle = action.CreateNode<IExecuteServerActionNode>($"FT_{feature}_IsOn").Below(start);
-                        getToggle.Action = getToggleAction;
-                        var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
-                        getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{feature}");
-                        var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
-                        getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
-                        var startTarget = start.Target;
-                        assign.CreateAssignment($"FT_{feature}", $"FT_{feature}_IsOn.IsOn");
-                        getToggle.Target = startTarget;
-                        start.Target = getToggle;
+                        var existsFeature = action.GetAllDescendantsOfType<IExecuteServerActionNode>().SingleOrDefault(s => s.Name == $"FT_{feature}_IsOn");
+                        if (existsFeature == default)
+                        {
+                            var outputparam = action.CreateOutputParameter($"FT_{feature}");
+                            outputparam.DataType = espace.BooleanType;
+                            var start = action.GetAllDescendantsOfType<IStartNode>().Single();
+                            var assign = action.GetAllDescendantsOfType<IAssignNode>().Single();
+                            var getToggle = action.CreateNode<IExecuteServerActionNode>($"FT_{feature}_IsOn").Below(start);
+                            getToggle.Action = getToggleAction;
+                            var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
+                            getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{feature}");
+                            var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
+                            getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
+                            var startTarget = start.Target;
+                            assign.CreateAssignment($"FT_{feature}", $"FT_{feature}_IsOn.IsOn");
+                            getToggle.Target = startTarget;
+                            start.Target = getToggle;
+                        }
                     }
                 }
             }

@@ -162,7 +162,9 @@ namespace ModelAPITest
             }
             else
             {
+                
                 AddToDataAction(espace, l, action, sc.Name, feature);
+                
             }
             return action;
         }
@@ -181,13 +183,13 @@ namespace ModelAPITest
             var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
             var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
             var destname = sname;
-            if(destname != feature)
-            {
-                destname = feature;
-            }
             if(l != null)
             {
                 destname = GetDestinationName(l);
+            }
+            if (destname != feature)
+            {
+                destname = feature;
             }
             getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
             getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{destname}");
@@ -214,39 +216,42 @@ namespace ModelAPITest
             var start = action.GetAllDescendantsOfType<IStartNode>().Single();
             var assign = action.GetAllDescendantsOfType<IAssignNode>().Single();
             var destname = sname;
-            if (destname != feature)
-            {
-                destname = feature;
-            }
             if (l != null)
             {
                 destname = GetDestinationName(l);
             }
+            if (destname != feature)
+            {
+                destname = feature;
+            }
             var startTarget = start.Target;
-
-            var getToggle = action.CreateNode<IExecuteServerActionNode>().Below(start);
-            getToggle.Action = getToggleAction;
-            getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{destname}");
-            getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
-            getToggle.Name = $"FT_{destname}_IsOn";
-            
-            var outputparam = action.CreateOutputParameter($"FT_{destname}");
-            outputparam.DataType = espace.BooleanType;
-
-            if (assign != null)
+            var existsFeature = action.GetAllDescendantsOfType<IExecuteServerActionNode>().SingleOrDefault(s => s.Name == $"FT_{destname}_IsOn");
+            if (existsFeature == default)
             {
-                assign.CreateAssignment($"FT_{destname}", $"FT_{destname}_IsOn.IsOn");
-                getToggle.Target = startTarget;
-            }
-            else
-            {
-                assign = action.CreateNode<IAssignNode>().Below(getToggle);
-                assign.CreateAssignment($"FT_{destname}", $"FT_{destname}_IsOn.IsOn");
-                getToggle.Target = assign;
-                assign.Target = startTarget;
-            }
+                var getToggle = action.CreateNode<IExecuteServerActionNode>().Below(start);
+                getToggle.Action = getToggleAction;
+                getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{destname}");
+                getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
+                getToggle.Name = $"FT_{destname}_IsOn";
 
-            start.Target = getToggle;
+                var outputparam = action.CreateOutputParameter($"FT_{destname}");
+                outputparam.DataType = espace.BooleanType;
+
+                if (assign != null)
+                {
+                    assign.CreateAssignment($"FT_{destname}", $"FT_{destname}_IsOn.IsOn");
+                    getToggle.Target = startTarget;
+                }
+                else
+                {
+                    assign = action.CreateNode<IAssignNode>().Below(getToggle);
+                    assign.CreateAssignment($"FT_{destname}", $"FT_{destname}_IsOn.IsOn");
+                    getToggle.Target = assign;
+                    assign.Target = startTarget;
+                }
+
+                start.Target = getToggle;
+            }
         }
 
         protected override IEnumerable<ILink> InsertIfplus(IESpace espace, List<IKey> keys, IEnumerable<ILink> links)
