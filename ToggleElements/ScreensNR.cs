@@ -31,7 +31,7 @@ namespace ModelAPITest
                 var exists = s.GetAllDescendantsOfType<ILink>().SingleOrDefault(k => k.ObjectKey.Equals(l.ObjectKey));
                 if (exists != default)
                 {
-                    CreateDataActionScreen(espace, s, l);
+                    CreateDataActionScreen(espace, s, l, feature);
                 }
             }
 
@@ -41,7 +41,7 @@ namespace ModelAPITest
                 var exists = s.GetAllDescendantsOfType<ILink>().SingleOrDefault(k => k.ObjectKey.Equals(l.ObjectKey));
                 if (exists != default)
                 {
-                    CreateDataActionBlock(espace, s, l);
+                    CreateDataActionBlock(espace, s, l, feature);
                 }
             }
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
@@ -60,7 +60,7 @@ namespace ModelAPITest
                 var exists = s.GetAllDescendantsOfType<ILink>().SingleOrDefault(k => k.ObjectKey.Equals(l.ObjectKey));
                 if (exists != default)
                 {
-                    CreateDataActionScreen(espace, s, l);
+                    CreateDataActionScreen(espace, s, l, feature);
                 }
             }
             var blocks = espace.GetAllDescendantsOfType<IMobileBlock>();
@@ -69,7 +69,7 @@ namespace ModelAPITest
                 var exists = s.GetAllDescendantsOfType<ILink>().SingleOrDefault(k => k.ObjectKey.Equals(l.ObjectKey));
                 if (exists != default)
                 {
-                    CreateDataActionBlock(espace, s, l);
+                    CreateDataActionBlock(espace, s, l, feature);
                 }
             }
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
@@ -98,7 +98,7 @@ namespace ModelAPITest
                     feature = sc.Name;
                 }
                 var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
-                var dataaction = CreateDataActionScreen(espace, sc, null);
+                var dataaction = CreateDataActionScreen(espace, sc, null, feature);
                 var ongetdata = sc.GetAllDescendantsOfType<IUILifeCycleEvent>().Single(e => e.GetType().ToString().Contains("OnAfterFetch"));
                 IScreenAction action = (IScreenAction)ongetdata.Destination;
                 var oninitaction = sc.CreateScreenAction();
@@ -129,7 +129,7 @@ namespace ModelAPITest
             }
         }
 
-        private IDataAction CreateDataActionScreen(IESpace espace, IMobileScreen sc, ILink l)
+        private IDataAction CreateDataActionScreen(IESpace espace, IMobileScreen sc, ILink l, String feature)
         {
             var action = sc.GetAllDescendantsOfType<IDataAction>().SingleOrDefault(e => e.Name == "GetToggles");
 
@@ -139,16 +139,16 @@ namespace ModelAPITest
                 action.Name = "GetToggles";
                 var out1 = action.GetAllDescendantsOfType<IOutputParameter>().SingleOrDefault(o => o.Name == "Out1");
                 out1.Delete();
-                CreateDataAction(espace, l, action, sc.Name);
+                CreateDataAction(espace, l, action, sc.Name, feature);
             }
             else
             {
-                AddToDataAction(espace, l, action, sc.Name);
+                AddToDataAction(espace, l, action, sc.Name, feature);
             }
             return action;
         }
 
-        private IDataAction CreateDataActionBlock(IESpace espace, IMobileBlock sc, ILink l)
+        private IDataAction CreateDataActionBlock(IESpace espace, IMobileBlock sc, ILink l, String feature)
         {
             var action = sc.GetAllDescendantsOfType<IDataAction>().SingleOrDefault(e => e.Name == "GetToggles");
 
@@ -158,16 +158,16 @@ namespace ModelAPITest
                 action.Name = "GetToggles";
                 var out1 = action.GetAllDescendantsOfType<IOutputParameter>().SingleOrDefault(o => o.Name == "Out1");
                 out1.Delete();
-                CreateDataAction(espace, l, action, sc.Name);
+                CreateDataAction(espace, l, action, sc.Name, feature);
             }
             else
             {
-                AddToDataAction(espace, l, action, sc.Name);
+                AddToDataAction(espace, l, action, sc.Name, feature);
             }
             return action;
         }
 
-        private void CreateDataAction(IESpace espace, ILink l, IDataAction oninitaction, String sname)
+        private void CreateDataAction(IESpace espace, ILink l, IDataAction oninitaction, String sname, String feature)
         {
             var start = oninitaction.CreateNode<IStartNode>();
             var getToggle = oninitaction.CreateNode<IExecuteServerActionNode>().Below(start);
@@ -181,6 +181,10 @@ namespace ModelAPITest
             var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
             var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
             var destname = sname;
+            if(destname != feature)
+            {
+                destname = feature;
+            }
             if(l != null)
             {
                 destname = GetDestinationName(l);
@@ -201,7 +205,7 @@ namespace ModelAPITest
             
         }
 
-        private void AddToDataAction(IESpace espace, ILink l, IDataAction action, String sname)
+        private void AddToDataAction(IESpace espace, ILink l, IDataAction action, String sname, String feature)
         { 
             var lib = espace.References.Single(a => a.Name == "FeatureToggle_Lib");
             var getToggleAction = (IServerActionSignature)lib.ServerActions.Single(a => a.Name == "FeatureToggle_IsOn");
@@ -210,6 +214,10 @@ namespace ModelAPITest
             var start = action.GetAllDescendantsOfType<IStartNode>().Single();
             var assign = action.GetAllDescendantsOfType<IAssignNode>().Single();
             var destname = sname;
+            if (destname != feature)
+            {
+                destname = feature;
+            }
             if (l != null)
             {
                 destname = GetDestinationName(l);
