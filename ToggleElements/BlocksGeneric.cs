@@ -53,13 +53,13 @@ namespace ModelAPITest {
             if (newOrAltered.Equals("new")) {
 
                 if (difBlocksKeys.Count() != 0) {
-                    InsertIf(newe, difBlocksKeys);
+                    InsertIf(newe, difBlocksKeys, "defaultfeature");
                 }
             }
            
         }
 
-        public virtual void InsertIf(IESpace espace, List<IKey> keys) {
+        public virtual void InsertIf(IESpace espace, List<IKey> keys, String feature) {
             var bl = espace.GetAllDescendantsOfType<GObjectSignature>().Where(s => keys.Contains(GetObjectKey(s)));
             ToggleEntities t = new ToggleEntities();
             ToggleAction a = new ToggleAction();
@@ -67,9 +67,13 @@ namespace ModelAPITest {
             var action = a.GetToggleAction(espace);
             foreach (GObjectSignature o in bl.ToList()) {
                 if (o.Parent is GParent) {
+                    if (feature == "defaultfeature")
+                    {
+                        feature = GetName(o);
+                    }
                     var parent = (GParent)o.Parent;
-                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{GetName(o)}", $"FT_{GetName(o)}", espace);
-                    CreateIf(parent, o, espace);
+                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
+                    CreateIf(parent, o, espace, feature);
                     o.Delete();
                    
                 } else {
@@ -104,7 +108,7 @@ namespace ModelAPITest {
 
         protected abstract string GetName(GObjectSignature o);
 
-        protected abstract void CreateIf(GParent p, GObjectSignature o, IESpace espace);
+        protected abstract void CreateIf(GParent p, GObjectSignature o, IESpace espace, String feature);
 
         protected abstract IKey GetObjectKey(GObjectSignature s);
 
@@ -123,7 +127,26 @@ namespace ModelAPITest {
 
             if (difBlocksKeys.Count() != 0)
             {
-                InsertIf(newe, difBlocksKeys);
+                InsertIf(newe, difBlocksKeys, "defaultfeature");
+            }
+        }
+
+        public void GetAllElementsFromList(IESpace newe, List<string> elements, String feature)
+        {
+            var listBlocks = newe.GetAllDescendantsOfType<GBlock>().Where(b => elements.Contains(b.Name));
+
+            List<IKey> difBlocksKeys = new List<IKey>();
+            Console.WriteLine("Blocks:");
+            foreach (GBlock block in listBlocks)
+            {
+                Console.WriteLine(block);
+                difBlocksKeys.Add(block.ObjectKey);
+
+            }
+
+            if (difBlocksKeys.Count() != 0)
+            {
+                InsertIf(newe, difBlocksKeys, feature);
             }
         }
     }

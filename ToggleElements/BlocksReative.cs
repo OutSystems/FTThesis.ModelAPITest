@@ -23,7 +23,7 @@ namespace ModelAPITest {
             return o.SourceBlock.Name.ToString();
         }
 
-        protected override void CreateIf(IPlaceholderContentWidget p, IMobileBlockInstanceWidget o, IESpace espace)
+        protected override void CreateIf(IPlaceholderContentWidget p, IMobileBlockInstanceWidget o, IESpace espace, String feature)
         {
             var name = GetName(o);
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>();
@@ -45,21 +45,21 @@ namespace ModelAPITest {
                         oninitaction.Name = "GetToggles";
                         var out1 = oninitaction.GetAllDescendantsOfType<IOutputParameter>().SingleOrDefault(o => o.Name == "Out1");
                         out1.Delete();
-                        var outputparam = oninitaction.CreateOutputParameter($"FT_{name}");
+                        var outputparam = oninitaction.CreateOutputParameter($"FT_{feature}");
                         outputparam.DataType = espace.BooleanType;
                         var start = oninitaction.CreateNode<IStartNode>();
-                        var getToggle = oninitaction.CreateNode<IExecuteServerActionNode>($"FT_{name}_IsOn").Below(start);
+                        var getToggle = oninitaction.CreateNode<IExecuteServerActionNode>($"FT_{feature}_IsOn").Below(start);
                         var assignVar = oninitaction.CreateNode<IAssignNode>().Below(getToggle);
                         var end = oninitaction.CreateNode<IEndNode>().Below(assignVar);
 
                         getToggle.Action = getToggleAction;
                         var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
-                        getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{name}");
+                        getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{feature}");
                         var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
                         getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
                         start.Target = getToggle;
 
-                        assignVar.CreateAssignment($"FT_{name}", $"FT_{name}_IsOn.IsOn");
+                        assignVar.CreateAssignment($"FT_{feature}", $"FT_{feature}_IsOn.IsOn");
                         getToggle.Target = assignVar;
                         assignVar.Target = end;
 
@@ -67,26 +67,26 @@ namespace ModelAPITest {
                     }
                     else
                     {
-                        var outputparam = action.CreateOutputParameter($"FT_{name}");
+                        var outputparam = action.CreateOutputParameter($"FT_{feature}");
                         outputparam.DataType = espace.BooleanType;
                         var start = action.GetAllDescendantsOfType<IStartNode>().Single();
                         var assign = action.GetAllDescendantsOfType<IAssignNode>().Single();
-                        var getToggle = action.CreateNode<IExecuteServerActionNode>($"FT_{name}_IsOn").Below(start);
+                        var getToggle = action.CreateNode<IExecuteServerActionNode>($"FT_{feature}_IsOn").Below(start);
                         getToggle.Action = getToggleAction;
                         var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
-                        getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{name}");
+                        getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{feature}");
                         var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
                         getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
                         var startTarget = start.Target;
-                        assign.CreateAssignment($"FT_{name}", $"FT_{name}_IsOn.IsOn");
+                        assign.CreateAssignment($"FT_{feature}", $"FT_{feature}_IsOn.IsOn");
                         getToggle.Target = startTarget;
                         start.Target = getToggle;
                     }
                 }
             }
             var instanceIf = p.CreateWidget<IIfWidget>();
-            instanceIf.SetCondition($"GetToggles.IsDataFetched and GetToggles.FT_{name}");
-            instanceIf.Name = $"If_FT_{name}";
+            instanceIf.SetCondition($"GetToggles.IsDataFetched and GetToggles.FT_{feature}");
+            instanceIf.Name = $"If_FT_{feature}_{name}";
             instanceIf.TrueBranch.Copy(o);
         }
     }

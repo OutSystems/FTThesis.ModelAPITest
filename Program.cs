@@ -21,13 +21,12 @@ namespace ModelAPITest
 
         static void Main(string[] args)
         {
-            string contents = File.ReadAllText(@"TestFiles\features.yml");
+            /*string contents = File.ReadAllText(@"TestFiles\features.yml");
 
             var deserializer = new DeserializerBuilder()
-                .WithNamingConvention(UnderscoredNamingConvention.Instance)  // see height_in_inches in sample yml 
+                .WithNamingConvention(UnderscoredNamingConvention.Instance)  
                 .Build();
 
-            //yml contains a string containing your YAML
             var p = deserializer.Deserialize<FeatureSet>(contents);
             foreach(Feature f in p.Features)
             {
@@ -36,11 +35,12 @@ namespace ModelAPITest
                 {
                     Console.WriteLine(e);
                 }
-            }
+            }*/
 
-            /*if (args[0] != "diff" && args[0] != "all")
+
+            /*if (args[0] != "diff" && args[0] != "all" && args[0] != "features")
             {
-                Console.WriteLine("Usage: \nall <File.oml> <outputFile.oml> \nOR \ndiff <oldFile.oml> <newFile.oml> <outputFile.oml>");
+                Console.WriteLine("Usage: \nall <File.oml> <outputFile.oml> \nOR \ndiff <oldFile.oml> <newFile.oml> <outputFile.oml> \nOR \nfeatures <configFile.yml> <moduleFile.oml> <outputFile.oml>");
                 return;
             }
             if (args[0] == "diff" & args.Length != 4)
@@ -52,9 +52,15 @@ namespace ModelAPITest
             {
                 Console.WriteLine("Usage: all <File.oml> <outputFile.oml>");
                 return;
+            }*/
+
+            if (args[0] != "features" && args.Length != 4)
+            {
+                Console.WriteLine("Usage: features <configFile.yml> <moduleFile.oml> <outputFile.oml>");
+                return;
             }
 
-            if (args[0] == "diff" & args.Length == 4)
+            /*if (args[0] == "diff" & args.Length == 4)
             {
                 RunDiff.RunForDiffElements(args);
             }
@@ -63,6 +69,11 @@ namespace ModelAPITest
             {
                 RunAll.RunForAllElements(args);
             }*/
+
+             if (args[0] == "features" & args.Length == 4)
+            {
+                RunContext.RunForSpecificFeatures(args);
+            }
 
         }
 

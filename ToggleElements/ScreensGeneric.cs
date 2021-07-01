@@ -30,8 +30,28 @@ namespace ModelAPITest
 
             if (screensKeys.Count() != 0)
             {
-                InsertIf(newe, screensKeys);
-                CreateScreenPrep(newe, screensKeys);
+                InsertIf(newe, screensKeys, "defaultfeature");
+                CreateScreenPrep(newe, screensKeys, "defaultfeature");
+            }
+        }
+
+        public void GetAllElementsFromList(IESpace newe, List<string> elements, String feature)
+        {
+            var listScreens = newe.GetAllDescendantsOfType<GScreen>().Where(b => elements.Contains(b.Name)); 
+
+            List<IKey> screensKeys = new List<IKey>();
+            Console.WriteLine("Screens:");
+            foreach (GScreen screen in listScreens)
+            {
+                Console.WriteLine(screen);
+                screensKeys.Add(screen.ObjectKey);
+
+            }
+
+            if (screensKeys.Count() != 0)
+            {
+                InsertIf(newe, screensKeys, feature);
+                CreateScreenPrep(newe, screensKeys, feature);
             }
         }
 
@@ -81,13 +101,13 @@ namespace ModelAPITest
             {
                 if (difScreensKeys.Count() != 0)
                 {
-                    InsertIf(newe, difScreensKeys);
-                    CreateScreenPrep(newe, difScreensKeys);
+                    InsertIf(newe, difScreensKeys, "defaultfeature");
+                    CreateScreenPrep(newe, difScreensKeys, "defaultfeature");
                 }
             }
         }
 
-        public void InsertIf(IESpace espace, List<IKey> keys)
+        public void InsertIf(IESpace espace, List<IKey> keys, String feature)
         {
             var links = espace.GetAllDescendantsOfType<GLink>().Where(s => keys.Contains(GetDestination(s).ObjectKey));
             links = InsertIfplus(espace, keys, links);
@@ -97,19 +117,23 @@ namespace ModelAPITest
             var action = a.GetToggleAction(espace);
             foreach (GLink l in links.ToList())
             {
+                if (feature == "defaultfeature")
+                {
+                    feature = GetDestinationName(l);
+                }
                 if (l.Parent is GParent1)
                 {
                     var parent = (GParent1)l.Parent;
-                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{GetDestinationName(l)}", $"FT_{GetDestinationName(l)}", espace);
+                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
                     
-                    CreateIf(parent, l, espace);
+                    CreateIf(parent, l, espace, feature);
                 }
                 else if (l.Parent is GParent2)
                 {
                     var parent = (GParent2)l.Parent;
-                    var rec =t.CreateRecord(entity, $"FT_{espace.Name}_{GetDestinationName(l)}", $"FT_{GetDestinationName(l)}", espace);
+                    var rec =t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
                     
-                    CreateIf2(parent, l, espace);
+                    CreateIf2(parent, l, espace, feature);
                 }
                 else
                 {
@@ -118,11 +142,11 @@ namespace ModelAPITest
             }
         }
 
-        protected abstract void CreateIf(GParent1 p, GLink o, IESpace eSpace);
+        protected abstract void CreateIf(GParent1 p, GLink o, IESpace eSpace, String feature);
 
-        protected abstract void CreateIf2(GParent2 p, GLink o, IESpace eSpace);
+        protected abstract void CreateIf2(GParent2 p, GLink o, IESpace eSpace, String feature);
 
-        protected abstract void CreateScreenPrep(IESpace espace, List<IKey> screenskeys);
+        protected abstract void CreateScreenPrep(IESpace espace, List<IKey> screenskeys, String feature);
 
         protected abstract IObjectSignature GetDestination(GLink l);
 

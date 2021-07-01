@@ -22,7 +22,7 @@ namespace ModelAPITest
             return l.OnClick.Destination;
         }
 
-        protected override void CreateIf(IPlaceholderContentWidget p, ILink l, IESpace espace)
+        protected override void CreateIf(IPlaceholderContentWidget p, ILink l, IESpace espace, String feature)
         {
             var name = GetDestinationName(l);
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>();
@@ -45,13 +45,13 @@ namespace ModelAPITest
                 }
             }
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
-            instanceIf.SetCondition($"GetToggles.IsDataFetched and GetToggles.FT_{name}");
-            instanceIf.Name = $"If_FT_{name}";
+            instanceIf.SetCondition($"GetToggles.IsDataFetched and GetToggles.FT_{feature}");
+            instanceIf.Name = $"If_FT_{feature}_{name}";
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
         }
 
-        protected override void CreateIf2(IContent p, ILink l, IESpace espace)
+        protected override void CreateIf2(IContent p, ILink l, IESpace espace, String feature)
         {
             var name = GetDestinationName(l);
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>();
@@ -73,13 +73,13 @@ namespace ModelAPITest
                 }
             }
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
-            instanceIf.SetCondition($"GetToggles.IsDataFetched and GetToggles.FT_{name}");
-            instanceIf.Name = $"If_FT_{name}";
+            instanceIf.SetCondition($"GetToggles.IsDataFetched and GetToggles.FT_{feature}");
+            instanceIf.Name = $"If_FT_{feature}_{name}";
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
         }
 
-        protected override void CreateScreenPrep(IESpace espace, List<IKey> screenskeys)
+        protected override void CreateScreenPrep(IESpace espace, List<IKey> screenskeys, String feature)
         {
             ToggleEntities t = new ToggleEntities();
             var entity = t.GetTogglesEntity(espace);
@@ -93,7 +93,11 @@ namespace ModelAPITest
 
             foreach (IMobileScreen sc in screens)
             {
-                var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{sc.Name}", $"FT_{sc.Name}", espace);
+                if (feature == "defaultfeature")
+                {
+                    feature = sc.Name;
+                }
+                var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
                 var dataaction = CreateDataActionScreen(espace, sc, null);
                 var ongetdata = sc.GetAllDescendantsOfType<IUILifeCycleEvent>().Single(e => e.GetType().ToString().Contains("OnAfterFetch"));
                 IScreenAction action = (IScreenAction)ongetdata.Destination;
@@ -112,7 +116,7 @@ namespace ModelAPITest
                 getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{name}");*/
 
                 var ifToggle = oninitaction.CreateNode<IIfNode>().Below(start);
-                ifToggle.SetCondition($"GetToggles.FT_{name}");
+                ifToggle.SetCondition($"GetToggles.FT_{feature}");
                 end.Below(ifToggle);
                 ifToggle.TrueTarget = end;
                 start.Target = ifToggle;
