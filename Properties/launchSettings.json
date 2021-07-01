@@ -2,7 +2,7 @@
   "profiles": {
     "ModelAPITest": {
       "commandName": "Project",
-      "commandLineArgs": "all TestFiles\\SimpleScreensTWAPINot.oml SimpleScreensTranformedTWAPI.oml"
+      "commandLineArgs": "features CurrentTF\\features.yml CurrentTF\\SimpleScreensTW.1.oml TransformedTWFeat.oml"
     }
   }
 }

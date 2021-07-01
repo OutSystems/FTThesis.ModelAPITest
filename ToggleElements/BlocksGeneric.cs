@@ -133,6 +133,7 @@ namespace ModelAPITest {
 
         public void GetAllElementsFromList(IESpace newe, List<string> elements, String feature)
         {
+            
             var listBlocks = newe.GetAllDescendantsOfType<GBlock>().Where(b => elements.Contains(b.Name));
 
             List<IKey> difBlocksKeys = new List<IKey>();
