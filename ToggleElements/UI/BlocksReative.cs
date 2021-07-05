@@ -32,10 +32,6 @@ namespace ModelAPITest {
                 var exists = s.GetAllDescendantsOfType<IMobileBlockInstanceWidget>().SingleOrDefault(k => k.ObjectKey.Equals(o.ObjectKey));
                 if (exists != default)
                 {
-                    //var localvar = s.CreateLocalVariable($"FT_{name}");
-                    //localvar.DataType = espace.BooleanType;
-                    //var oninit = s.GetAllDescendantsOfType<IUILifeCycleEvent>().Single(e => e.GetType().ToString().Contains("OnInitialize"));
-                    //IScreenAction action = (IScreenAction)oninit.Destination;
                     var action = s.GetAllDescendantsOfType<IDataAction>().SingleOrDefault(e => e.Name == "GetToggles");
                     var lib = espace.References.Single(a => a.Name == "FeatureToggle_Lib");
                     var getToggleAction = (IServerActionSignature)lib.ServerActions.Single(a => a.Name == "FeatureToggle_IsOn");
@@ -63,7 +59,6 @@ namespace ModelAPITest {
                         getToggle.Target = assignVar;
                         assignVar.Target = end;
 
-                        //oninit.Destination = oninitaction;
                     }
                     else
                     {

@@ -55,25 +55,25 @@ namespace ModelAPITest
             if (isoldtraditional)
             {
                 BlocksTraditional traditionalBlocks = new BlocksTraditional();
-                Screens s = new Screens();
+                ScreensTraditional s = new ScreensTraditional();
                 ServerAction l = new ServerAction();
-                //ToggleRemoteAction t = new ToggleRemoteAction();
+                ToggleRemoteAction t = new ToggleRemoteAction();
                 foreach (Feature f in p.Features)
                 {
                     traditionalBlocks.GetAllElementsFromList(module, f.Elements, f.Name);
                     s.GetAllElementsFromList(module, f.Elements, f.Name);
                     l.GetAllElementsFromList(module, f.Elements, f.Name);
                 }
-                //t.GetToggleAction(module);
+                t.GetToggleAction(module);
                 
             }
             else
             {
                 BlocksReative reactiveBlocks = new BlocksReative();
-                ScreensNR s = new ScreensNR();
+                ScreensReactive s = new ScreensReactive();
                 ServerAction l = new ServerAction();
                 //ClientAction c = new ClientAction();
-                //ToggleRemoteAction t = new ToggleRemoteAction();
+                ToggleRemoteAction t = new ToggleRemoteAction();
                 foreach (Feature f in p.Features)
                 {
                     reactiveBlocks.GetAllElementsFromList(module, f.Elements, f.Name);
@@ -81,7 +81,7 @@ namespace ModelAPITest
                     l.GetAllElementsFromList(module, f.Elements, f.Name);
                     //c.GetAllElementsFromList(module, f.Elements, f.Name);
                 }
-                //t.GetToggleAction(module);
+                t.GetToggleAction(module);
                 
 
             }

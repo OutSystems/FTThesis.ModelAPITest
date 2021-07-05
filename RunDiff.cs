@@ -50,7 +50,7 @@ namespace ModelAPITest
             if (isoldtraditional)
             {
                 BlocksTraditional tradicionalBlocks = new BlocksTraditional();
-                Screens s = new Screens();
+                ScreensTraditional s = new ScreensTraditional();
                 ServerAction l = new ServerAction();
                 tradicionalBlocks.GetDiffElements(oldmodule, newmodule, "new");
                 s.GetDiffElements(oldmodule, newmodule, "new");
@@ -62,7 +62,7 @@ namespace ModelAPITest
             else
             {
                 BlocksReative reactiveBlocks = new BlocksReative();
-                ScreensNR s = new ScreensNR();
+                ScreensReactive s = new ScreensReactive();
                 ServerAction l = new ServerAction();
                 //ClientAction c = new ClientAction();
                 reactiveBlocks.GetDiffElements(oldmodule, newmodule, "new");

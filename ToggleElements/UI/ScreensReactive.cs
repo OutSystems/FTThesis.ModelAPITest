@@ -15,7 +15,7 @@ using ModelAPITest.ToggleElements;
 namespace ModelAPITest
 {
 
-    class ScreensNR : ScreensGeneric<ILink, IMobileScreen, IPlaceholderContentWidget, IContent>
+    class ScreensReactive : ScreensGeneric<ILink, IMobileScreen, IPlaceholderContentWidget, IContent>
     {
         protected override IObjectSignature GetDestination(ILink l)
         {
@@ -86,11 +86,6 @@ namespace ModelAPITest
 
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>().Where(s => screenskeys.Contains(s.ObjectKey));
 
-            //var lib = espace.References.Single(a => a.Name == "FeatureToggle_Lib");
-            //var getToggleAction = (IServerActionSignature)lib.ServerActions.Single(a => a.Name == "FeatureToggle_IsOn");
-            //var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
-            //var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
-
             foreach (IMobileScreen sc in screens)
             {
                 if (feature == "defaultfeature")
@@ -105,15 +100,8 @@ namespace ModelAPITest
                 oninitaction.Name = "OnAfterFetch";
 
                 var start = oninitaction.CreateNode<IStartNode>();
-                //var getToggle = oninitaction.CreateNode<IExecuteServerActionNode>().Below(start);
                 var end = oninitaction.CreateNode<IEndNode>();
                 var name = sc.Name;
-
-                /*getToggle.Action = getToggleAction;
-                getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
-                start.Target = getToggle;
-                getToggle.Name = $"FT_{name}_IsOn";
-                getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{name}");*/
 
                 var ifToggle = oninitaction.CreateNode<IIfNode>().Below(start);
                 ifToggle.SetCondition($"GetToggles.FT_{feature}");

@@ -61,13 +61,5 @@ namespace ModelAPITest.ToggleElements
 
             return exists;
         }
-
-        public void CreateToggleInPlatform(String key, String label, IESpace espace)
-        {
-            var api = espace.GetAllDescendantsOfType<IRestClient>().Single(c => c.Name == "FeatureToggleAPI");
-            var method = api.GetAllDescendantsOfType<IRestAction>().Single(a => a.Name == "EV_FeatureToggle_CreateOrUpdate");
-
-
-        }
     }
 }

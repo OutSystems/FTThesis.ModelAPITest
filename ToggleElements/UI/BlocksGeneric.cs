@@ -84,28 +84,6 @@ namespace ModelAPITest {
             
         }
 
-        /// <summary>
-        /// only for debugging and experimentation purposes, to be deleted
-        /// </summary>
-        /// <param name="module"></param>
-        public void ListBlocksAndScreens(IESpace module) {
-            var listScreens = module.GetAllDescendantsOfType<GScreen>();
-
-            Console.WriteLine("\nScreens:");
-
-            foreach (GScreen screen in listScreens) {
-                Console.WriteLine(screen);
-            }
-
-            var listwebblocks = module.GetAllDescendantsOfType<GBlock>();
-
-            Console.WriteLine("\nWebBlocks:");
-
-            foreach (GBlock block in listwebblocks) {
-                Console.WriteLine(block);
-            }
-        }
-
         protected abstract string GetName(GObjectSignature o);
 
         protected abstract void CreateIf(GParent p, GObjectSignature o, IESpace espace, String feature);
