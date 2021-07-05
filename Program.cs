@@ -61,19 +61,7 @@ namespace ModelAPITest
 
         }
 
-        /*private static void ListTraditional(IESpace module)
-        //only for debugging and experimentation purposes, to be deleted
-        {
-            BlocksTraditional tradicionalBlocks = new BlocksTraditional();
-            tradicionalBlocks.ListBlocksAndScreens(module);
-        }
-
-        private static void ListReactive(IESpace module)
-        //only for debugging and experimentation purposes, to be deleted
-        {
-            BlocksReative reactiveBlocks = new BlocksReative();
-            reactiveBlocks.ListBlocksAndScreens(module);
-        }*/
+        
 
     }
 }
