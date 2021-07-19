@@ -94,7 +94,7 @@ namespace ModelAPITest
                 }
                 var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
                 var dataaction = CreateDataActionScreen(espace, sc, null, feature);
-                var ongetdata = sc.GetAllDescendantsOfType<IUILifeCycleEvent>().Single(e => e.GetType().ToString().Contains("OnAfterFetch"));
+                var ongetdata = dataaction.GetAllDescendantsOfType<IUILifeCycleEvent>().Single(e => e.GetType().ToString().Contains("OnAfterFetch"));
                 IScreenAction action = (IScreenAction)ongetdata.Destination;
                 var oninitaction = sc.CreateScreenAction();
                 oninitaction.Name = "OnAfterFetch";

@@ -1,5 +1,6 @@
 ﻿using ModelAPITest.ToggleElements;
 using OutSystems.Model;
+using OutSystems.Model.UI.Mobile;
 using OutSystems.Model.UI.Web;
 using System;
 using System.Collections.Generic;
@@ -21,15 +22,16 @@ namespace ModelAPITest
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
                 .Build();
 
+            Console.WriteLine("----------Transformation Report----------");
             var p = deserializer.Deserialize<FeatureSet>(contents);
-            foreach (Feature f in p.Features)
+            /*foreach (Feature f in p.Features)
             {
-                Console.WriteLine($"Feature: {f.Name}, Elements:");
+                Console.WriteLine($"FEATURE: \n{f.Name}");
                 foreach (String e in f.Elements)
                 {
                     Console.WriteLine(e);
                 }
-            }
+            }*/
 
             var ESpacePath = args[2];
 
@@ -58,11 +60,14 @@ namespace ModelAPITest
                 ScreensTraditional s = new ScreensTraditional();
                 ServerAction l = new ServerAction();
                 ToggleRemoteAction t = new ToggleRemoteAction();
+                
                 foreach (Feature f in p.Features)
                 {
+                    Console.WriteLine($"FEATURE: \n{f.Name} : FT_{module.Name}_{f.Name}");
                     traditionalBlocks.GetAllElementsFromList(module, f.Elements, f.Name);
                     s.GetAllElementsFromList(module, f.Elements, f.Name);
                     l.GetAllElementsFromList(module, f.Elements, f.Name);
+                    Console.WriteLine("-----------------------------------------");
                 }
                 t.GetToggleAction(module);
                 
@@ -74,19 +79,22 @@ namespace ModelAPITest
                 ServerAction l = new ServerAction();
                 //ClientAction c = new ClientAction();
                 ToggleRemoteAction t = new ToggleRemoteAction();
+               
                 foreach (Feature f in p.Features)
                 {
+                    Console.WriteLine($"FEATURE: \n{f.Name} : FT_{module.Name}_{f.Name}");
                     reactiveBlocks.GetAllElementsFromList(module, f.Elements, f.Name);
                     s.GetAllElementsFromList(module, f.Elements, f.Name);
                     l.GetAllElementsFromList(module, f.Elements, f.Name);
                     //c.GetAllElementsFromList(module, f.Elements, f.Name);
+                    Console.WriteLine("-----------------------------------------");
                 }
                 t.GetToggleAction(module);
                 
 
             }
             module.Save(saveESpacePath.FullName);
-            Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
+            //Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
         }
 
         private static bool IsTraditional(IESpace module)

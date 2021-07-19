@@ -17,6 +17,15 @@
     <None Update="CurrentTF\featuresNR.yml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="CurrentTF\IssueTracker.oml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="CurrentTF\IssueTracker2.oml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="CurrentTF\itfeatures.yml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="CurrentTF\SimpleScreensNR.1.oml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

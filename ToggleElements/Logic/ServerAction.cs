@@ -17,7 +17,7 @@ namespace ModelAPITest.ToggleElements
 
         protected override void WriteHeader()
         {
-            Console.WriteLine("Server Actions:");
+            Console.WriteLine("Transformed Server Actions:");
         }
 
     }

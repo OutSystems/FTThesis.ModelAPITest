@@ -20,7 +20,7 @@ namespace ModelAPITest
             var listScreens = newe.GetAllDescendantsOfType<GScreen>();
 
             List<IKey> screensKeys = new List<IKey>();
-            Console.WriteLine("Screens:");
+            Console.WriteLine("Transformed Screens:");
             foreach (GScreen screen in listScreens)
             {
                 Console.WriteLine(screen);
@@ -40,7 +40,7 @@ namespace ModelAPITest
             var listScreens = newe.GetAllDescendantsOfType<GScreen>().Where(b => elements.Contains(b.Name)); 
 
             List<IKey> screensKeys = new List<IKey>();
-            Console.WriteLine("Screens:");
+            Console.WriteLine("Transformed Screens:");
             foreach (GScreen screen in listScreens)
             {
                 Console.WriteLine(screen);
@@ -89,7 +89,7 @@ namespace ModelAPITest
                 }
             }
 
-            if (newOrAltered.Equals("new")) { Console.WriteLine("\nNew Screens:"); }
+            if (newOrAltered.Equals("new")) { Console.WriteLine("Transformed Screens:"); }
             else if (newOrAltered.Equals("altered")) { Console.WriteLine("\nAltered Screens:"); }
 
             foreach (GScreen screen in difScreens)

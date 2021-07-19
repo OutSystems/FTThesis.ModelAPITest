@@ -44,7 +44,7 @@ namespace ModelAPITest {
                 }
             }
 
-            if (newOrAltered.Equals("new")) { Console.WriteLine("\nNew Blocks:"); } else if (newOrAltered.Equals("altered")) { Console.WriteLine("\nAltered Blocks:"); }
+            if (newOrAltered.Equals("new")) { Console.WriteLine("Transformed Blocks:"); } else if (newOrAltered.Equals("altered")) { Console.WriteLine("\nAltered Blocks:"); }
 
             foreach (GBlock block in difBlocks) {
                 Console.WriteLine(block);
@@ -95,7 +95,7 @@ namespace ModelAPITest {
             var listBlocks = newe.GetAllDescendantsOfType<GBlock>();
 
             List<IKey> difBlocksKeys = new List<IKey>();
-            Console.WriteLine("Blocks:");
+            Console.WriteLine("Transformed Blocks:");
             foreach (GBlock block in listBlocks)
             {
                 Console.WriteLine(block);
@@ -115,7 +115,7 @@ namespace ModelAPITest {
             var listBlocks = newe.GetAllDescendantsOfType<GBlock>().Where(b => elements.Contains(b.Name));
 
             List<IKey> difBlocksKeys = new List<IKey>();
-            Console.WriteLine("Blocks:");
+            Console.WriteLine("Transformed Blocks:");
             foreach (GBlock block in listBlocks)
             {
                 Console.WriteLine(block);

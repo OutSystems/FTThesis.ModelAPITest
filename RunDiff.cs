@@ -47,6 +47,8 @@ namespace ModelAPITest
                 return;
             }
 
+            Console.WriteLine("----------Transformation Report----------");
+
             if (isoldtraditional)
             {
                 BlocksTraditional tradicionalBlocks = new BlocksTraditional();
@@ -74,7 +76,7 @@ namespace ModelAPITest
             }
 
             newmodule.Save(saveESpacePath.FullName);
-            Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
+            //Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
         }
 
         private static bool IsTraditional(IESpace module)

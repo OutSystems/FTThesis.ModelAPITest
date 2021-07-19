@@ -33,6 +33,8 @@ namespace ModelAPITest
 
             var isoldtraditional = IsTraditional(module);
 
+            Console.WriteLine("----------Transformation Report----------");
+
             if (isoldtraditional)
             {
                 BlocksTraditional traditionalBlocks = new BlocksTraditional();
@@ -59,7 +61,7 @@ namespace ModelAPITest
 
             }
             module.Save(saveESpacePath.FullName);
-            Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
+            //Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
         }
 
 

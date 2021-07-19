@@ -87,7 +87,7 @@ namespace ModelAPITest.ToggleElements
                 }
             }
             WriteHeader();
-            if (newOrAltered.Equals("new")) { Console.WriteLine("\nNew:"); }
+            if (newOrAltered.Equals("new")) { WriteHeader(); }
             else if (newOrAltered.Equals("altered")) { Console.WriteLine("\nAltered:"); }
 
             foreach (GAction actions in difActions)

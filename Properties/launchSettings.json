@@ -2,7 +2,7 @@
   "profiles": {
     "ModelAPITest": {
       "commandName": "Project",
-      "commandLineArgs": "diff CurrentTF\\SimpleScreensNR.oml CurrentTF\\SimpleScreensNR.1.oml TransformedNRDiff.oml"
+      "commandLineArgs": "features CurrentTF\\itfeatures.yml CurrentTF\\IssueTracker.oml TransformedITFeat.oml"
     }
   }
 }

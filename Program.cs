@@ -44,6 +44,11 @@ namespace ModelAPITest
                 return;
             }
 
+            FileStream filestream = new FileStream("ReportFile.txt", FileMode.Create);
+            var streamwriter = new StreamWriter(filestream);
+            streamwriter.AutoFlush = true;
+            Console.SetOut(streamwriter);
+
             if (args[0] == "diff" & args.Length == 4)
             {
                 RunDiff.RunForDiffElements(args);
