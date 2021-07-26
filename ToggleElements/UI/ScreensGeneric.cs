@@ -30,12 +30,12 @@ namespace ModelAPITest
 
             if (screensKeys.Count() != 0)
             {
-                InsertIf(newe, screensKeys, "defaultfeature");
-                CreateScreenPrep(newe, screensKeys, "defaultfeature");
+                InsertIf(newe, screensKeys, "defaultfeature", newe.Name);
+                CreateScreenPrep(newe, screensKeys, "defaultfeature", newe.Name);
             }
         }
 
-        public void GetAllElementsFromList(IESpace newe, List<string> elements, String feature)
+        public void GetAllElementsFromList(IESpace newe, List<string> elements, String feature, String prefix)
         {
             var listScreens = newe.GetAllDescendantsOfType<GScreen>().Where(b => elements.Contains(b.Name)); 
 
@@ -50,8 +50,8 @@ namespace ModelAPITest
 
             if (screensKeys.Count() != 0)
             {
-                InsertIf(newe, screensKeys, feature);
-                CreateScreenPrep(newe, screensKeys, feature);
+                InsertIf(newe, screensKeys, feature, prefix);
+                CreateScreenPrep(newe, screensKeys, feature, prefix);
             }
         }
 
@@ -101,13 +101,13 @@ namespace ModelAPITest
             {
                 if (difScreensKeys.Count() != 0)
                 {
-                    InsertIf(newe, difScreensKeys, "defaultfeature");
-                    CreateScreenPrep(newe, difScreensKeys, "defaultfeature");
+                    InsertIf(newe, difScreensKeys, "defaultfeature", newe.Name);
+                    CreateScreenPrep(newe, difScreensKeys, "defaultfeature", newe.Name);
                 }
             }
         }
 
-        public void InsertIf(IESpace espace, List<IKey> keys, String feature)
+        public void InsertIf(IESpace espace, List<IKey> keys, String feature, String prefix)
         {
             var links = espace.GetAllDescendantsOfType<GLink>().Where(s => keys.Contains(GetDestination(s).ObjectKey));
             links = InsertIfplus(espace, keys, links);
@@ -124,16 +124,16 @@ namespace ModelAPITest
                 if (l.Parent is GParent1)
                 {
                     var parent = (GParent1)l.Parent;
-                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
+                    var rec = t.CreateRecord(entity, $"FT_{prefix}_{feature}", $"FT_{feature}", espace);
                     
-                    CreateIf(parent, l, espace, feature);
+                    CreateIf(parent, l, espace, feature, prefix);
                 }
                 else if (l.Parent is GParent2)
                 {
                     var parent = (GParent2)l.Parent;
-                    var rec =t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
+                    var rec =t.CreateRecord(entity, $"FT_{prefix}_{feature}", $"FT_{feature}", espace);
                     
-                    CreateIf2(parent, l, espace, feature);
+                    CreateIf2(parent, l, espace, feature, prefix);
                 }
                 else
                 {
@@ -142,11 +142,11 @@ namespace ModelAPITest
             }
         }
 
-        protected abstract void CreateIf(GParent1 p, GLink o, IESpace eSpace, String feature);
+        protected abstract void CreateIf(GParent1 p, GLink o, IESpace eSpace, String feature, String prefix);
 
-        protected abstract void CreateIf2(GParent2 p, GLink o, IESpace eSpace, String feature);
+        protected abstract void CreateIf2(GParent2 p, GLink o, IESpace eSpace, String feature, String prefix);
 
-        protected abstract void CreateScreenPrep(IESpace espace, List<IKey> screenskeys, String feature);
+        protected abstract void CreateScreenPrep(IESpace espace, List<IKey> screenskeys, String feature, String prefix);
 
         protected abstract IObjectSignature GetDestination(GLink l);
 

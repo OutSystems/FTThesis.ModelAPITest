@@ -10,6 +10,7 @@ namespace ModelAPITest.ToggleElements
 {
     class ClientAction : LogicGeneric<IClientAction>
     {
+       
         protected override void SetActionsPrivacy(IClientAction action)
         {
             action.Public = false;

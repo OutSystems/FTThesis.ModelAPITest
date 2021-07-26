@@ -53,13 +53,13 @@ namespace ModelAPITest {
             if (newOrAltered.Equals("new")) {
 
                 if (difBlocksKeys.Count() != 0) {
-                    InsertIf(newe, difBlocksKeys, "defaultfeature");
+                    InsertIf(newe, difBlocksKeys, "defaultfeature", newe.Name);
                 }
             }
            
         }
 
-        public virtual void InsertIf(IESpace espace, List<IKey> keys, String feature) {
+        public virtual void InsertIf(IESpace espace, List<IKey> keys, String feature, string prefix) {
             var bl = espace.GetAllDescendantsOfType<GObjectSignature>().Where(s => keys.Contains(GetObjectKey(s)));
             ToggleEntities t = new ToggleEntities();
             ToggleAction a = new ToggleAction();
@@ -72,8 +72,8 @@ namespace ModelAPITest {
                         feature = GetName(o);
                     }
                     var parent = (GParent)o.Parent;
-                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
-                    CreateIf(parent, o, espace, feature);
+                    var rec = t.CreateRecord(entity, $"FT_{prefix}_{feature}", $"FT_{feature}", espace);
+                    CreateIf(parent, o, espace, feature, prefix);
                     o.Delete();
                    
                 } else {
@@ -86,7 +86,7 @@ namespace ModelAPITest {
 
         protected abstract string GetName(GObjectSignature o);
 
-        protected abstract void CreateIf(GParent p, GObjectSignature o, IESpace espace, String feature);
+        protected abstract void CreateIf(GParent p, GObjectSignature o, IESpace espace, String feature, String prefix);
 
         protected abstract IKey GetObjectKey(GObjectSignature s);
 
@@ -105,11 +105,11 @@ namespace ModelAPITest {
 
             if (difBlocksKeys.Count() != 0)
             {
-                InsertIf(newe, difBlocksKeys, "defaultfeature");
+                InsertIf(newe, difBlocksKeys, "defaultfeature", newe.Name);
             }
         }
 
-        public void GetAllElementsFromList(IESpace newe, List<string> elements, String feature)
+        public void GetAllElementsFromList(IESpace newe, List<string> elements, String feature, String prefix)
         {
             
             var listBlocks = newe.GetAllDescendantsOfType<GBlock>().Where(b => elements.Contains(b.Name));
@@ -125,7 +125,7 @@ namespace ModelAPITest {
 
             if (difBlocksKeys.Count() != 0)
             {
-                InsertIf(newe, difBlocksKeys, feature);
+                InsertIf(newe, difBlocksKeys, feature, prefix);
             }
         }
     }
