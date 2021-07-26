@@ -40,7 +40,6 @@ namespace ModelAPITest
         {
             ToggleEntities t = new ToggleEntities();
             var entity = t.GetTogglesEntity(espace);
-            
             var screens = espace.GetAllDescendantsOfType<IWebScreen>().Where(s => screenskeys.Contains(s.ObjectKey));
             foreach (IWebScreen sc in screens)
             {

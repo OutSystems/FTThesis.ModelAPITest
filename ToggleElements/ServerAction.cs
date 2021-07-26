@@ -40,7 +40,9 @@ namespace ModelAPITest.ToggleElements
 
             foreach (IServerAction actions in listNewServerActions.ToList())
             {
+
                 if(actions.Name != "GetFTValue"){
+
                     var skey = actions.ObjectKey;
                     var modDate = ((IFlow)actions).LastModifiedDate;
                     if (newOrAltered.Equals("new"))

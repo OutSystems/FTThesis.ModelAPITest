@@ -71,6 +71,7 @@ namespace ModelAPITest
                 //c.GetDiffElements(oldmodule, newmodule, "new");
                 ToggleRemoteAction t = new ToggleRemoteAction();
                 t.GetToggleAction(newmodule);
+
             }
 
             newmodule.Save(saveESpacePath.FullName);

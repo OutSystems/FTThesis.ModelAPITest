@@ -130,7 +130,9 @@ namespace ModelAPITest.ToggleElements
                 {
                     doAction.SetArgumentValue(i, i.Name);
                 }
-                if (newAction.OutputParameters.Count() != 0 )
+
+                if (newAction.OutputParameters.Count() != 0)
+
                 {
                     var assign = sa.CreateNode<IAssignNode>().Below(doAction);
                     end.Below(assign);
@@ -138,7 +140,6 @@ namespace ModelAPITest.ToggleElements
                     {
                         assign.CreateAssignment(o.Name, $"{doAction.Name}.{o.Name}");
                     }
-                    
                     doAction.Target = assign;
                     assign.Target = end;
                 }
@@ -146,6 +147,6 @@ namespace ModelAPITest.ToggleElements
             }
 
         }
-    
+
     }
 }
