@@ -14,5 +14,7 @@ The current program is written for both **Traditional Web** and **Reactive**. Ke
 For running, execute the program and then insert the desired file paths, as well as the path for the output file, according to instructions:
 
 diff <oldFile.oml> <newFile.oml> <outputFile.oml> - for inserting toggles in new elements between old version and new version of the same OML
+
 OR
+
 features <configFile.yml> <moduleFile.oml> <outputFile.oml> - for inserting toggles in an OML according to a config file specifying feature context
