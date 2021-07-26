@@ -47,31 +47,36 @@ namespace ModelAPITest
                 return;
             }
 
+            Console.WriteLine("----------Transformation Report----------");
+
             if (isoldtraditional)
             {
                 BlocksTraditional tradicionalBlocks = new BlocksTraditional();
-                Screens s = new Screens();
+                ScreensTraditional s = new ScreensTraditional();
                 ServerAction l = new ServerAction();
                 tradicionalBlocks.GetDiffElements(oldmodule, newmodule, "new");
                 s.GetDiffElements(oldmodule, newmodule, "new");
                 l.GetDiffElements(oldmodule, newmodule, "new");
-
+                ToggleRemoteAction t = new ToggleRemoteAction();
+                t.GetToggleAction(newmodule);
 
             }
             else
             {
                 BlocksReative reactiveBlocks = new BlocksReative();
-                ScreensNR s = new ScreensNR();
+                ScreensReactive s = new ScreensReactive();
                 ServerAction l = new ServerAction();
                 //ClientAction c = new ClientAction();
                 reactiveBlocks.GetDiffElements(oldmodule, newmodule, "new");
                 s.GetDiffElements(oldmodule, newmodule, "new");
                 l.GetDiffElements(oldmodule, newmodule, "new");
                 //c.GetDiffElements(oldmodule, newmodule, "new");
+                ToggleRemoteAction t = new ToggleRemoteAction();
+                t.GetToggleAction(newmodule);
             }
 
             newmodule.Save(saveESpacePath.FullName);
-            Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
+            //Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
         }
 
         private static bool IsTraditional(IESpace module)

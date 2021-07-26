@@ -19,13 +19,13 @@ namespace ModelAPITest
             return o.SourceBlock.Name;
         }
 
-        protected override void CreateIf(IPlaceholderContentWidget p, IWebBlockInstanceWidget o, IESpace eSpace)
+        protected override void CreateIf(IPlaceholderContentWidget p, IWebBlockInstanceWidget o, IESpace eSpace, String feature)
         {
             ToggleAction a = new ToggleAction();
             var action = a.GetToggleAction(eSpace);
             var instanceIf = p.CreateWidget<IIfWidget>();
-            instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{eSpace.Name}_{GetName(o)})");
-            instanceIf.Name = $"If_FT_{GetName(o)}";
+            instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{eSpace.Name}_{feature})");
+            instanceIf.Name = $"If_FT_{feature}_{GetName(o)}";
             instanceIf.TrueBranch.Copy(o);
         }
     }

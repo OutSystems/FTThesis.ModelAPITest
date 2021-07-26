@@ -33,29 +33,35 @@ namespace ModelAPITest
 
             var isoldtraditional = IsTraditional(module);
 
+            Console.WriteLine("----------Transformation Report----------");
+
             if (isoldtraditional)
             {
                 BlocksTraditional traditionalBlocks = new BlocksTraditional();
-                Screens s = new Screens();
+                ScreensTraditional s = new ScreensTraditional();
                 ServerAction l = new ServerAction();
                 traditionalBlocks.GetAllElements(module);
                 s.GetAllElements(module);
                 l.GetAllElements(module);
+                ToggleRemoteAction t = new ToggleRemoteAction();
+                t.GetToggleAction(module);
             }
             else
             {
                 BlocksReative reactiveBlocks = new BlocksReative();
-                ScreensNR s = new ScreensNR();
+                ScreensReactive s = new ScreensReactive();
                 ServerAction l = new ServerAction();
                 //ClientAction c = new ClientAction();
                 reactiveBlocks.GetAllElements(module);
                 s.GetAllElements(module);
                 l.GetAllElements(module);
                 //c.GetAllElements(module);
+                ToggleRemoteAction t = new ToggleRemoteAction();
+                t.GetToggleAction(module);
 
             }
             module.Save(saveESpacePath.FullName);
-            Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
+            //Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
         }
 
 

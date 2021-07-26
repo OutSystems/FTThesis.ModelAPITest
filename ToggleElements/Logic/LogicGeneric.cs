@@ -8,15 +8,17 @@ using System.Text;
 
 namespace ModelAPITest.ToggleElements
 {
-    class ServerAction : ElementToggle
+    abstract class LogicGeneric<GAction> : ElementToggle
+        where GAction : IAction
+
     {
         public void GetAllElements(IESpace newe)
         {
-            var listactions = newe.GetAllDescendantsOfType<IServerAction>();
+            var listactions = newe.GetAllDescendantsOfType<GAction>();
 
             List<IKey> actionKeys = new List<IKey>();
-            Console.WriteLine("Server Actions:");
-            foreach (IServerAction action in listactions.ToList())
+            WriteHeader();
+            foreach (GAction action in listactions.ToList())
             {
                 Console.WriteLine(action);
                 actionKeys.Add(action.ObjectKey);
@@ -25,20 +27,39 @@ namespace ModelAPITest.ToggleElements
 
             if (actionKeys.Count() != 0)
             {
-                InsertIf(newe, actionKeys);
+                InsertIf(newe, actionKeys, "defaultfeature");
             }
         }
 
-        public void GetDiffElements(IESpace old, IESpace newe, String newOrAltered)
+        public void GetAllElementsFromList(IESpace newe, List<string> elements, string feature)
         {
-            var listOldServerActions = old.GetAllDescendantsOfType<IServerAction>();
+            var listactions = newe.GetAllDescendantsOfType<GAction>().Where(b => elements.Contains(b.Name)); ;
 
-            var listNewServerActions = newe.GetAllDescendantsOfType<IServerAction>();
+            List<IKey> actionKeys = new List<IKey>();
+            WriteHeader();
+            foreach (GAction action in listactions.ToList())
+            {
+                Console.WriteLine(action);
+                actionKeys.Add(action.ObjectKey);
 
-            List<IServerAction> difActions = new List<IServerAction>();
+            }
+
+            if (actionKeys.Count() != 0)
+            {
+                InsertIf(newe, actionKeys, feature);
+            }
+        }
+
+        public void GetDiffElements(IESpace old, IESpace newe, string newOrAltered)
+        {
+            var listOldActions = old.GetAllDescendantsOfType<GAction>();
+
+            var listNewActions = newe.GetAllDescendantsOfType<GAction>();
+
+            List<GAction> difActions = new List<GAction>();
             List<IKey> difActionKeys = new List<IKey>();
 
-            foreach (IServerAction actions in listNewServerActions)
+            foreach (GAction actions in listNewActions.ToList())
             {
                 if (actions.Name != "GetFTValue")
                 {
@@ -46,7 +67,7 @@ namespace ModelAPITest.ToggleElements
                     var modDate = ((IFlow)actions).LastModifiedDate;
                     if (newOrAltered.Equals("new"))
                     {
-                        var olds = listOldServerActions.SingleOrDefault(s => (s.ObjectKey.Equals(skey)));
+                        var olds = listOldActions.SingleOrDefault(s => (s.ObjectKey.Equals(skey)));
                         if (olds == null)
                         {
                             difActions.Add(actions);
@@ -55,8 +76,8 @@ namespace ModelAPITest.ToggleElements
                     }
                     else
                     {
-                        var olds = listOldServerActions.SingleOrDefault(s => (s.ObjectKey.Equals(skey) && ((IFlow)s).LastModifiedDate.Equals(modDate)));
-                        var olds2 = listOldServerActions.SingleOrDefault(s => (s.ObjectKey.Equals(skey)));
+                        var olds = listOldActions.SingleOrDefault(s => (s.ObjectKey.Equals(skey) && ((IFlow)s).LastModifiedDate.Equals(modDate)));
+                        var olds2 = listOldActions.SingleOrDefault(s => (s.ObjectKey.Equals(skey)));
                         if (olds == null && olds2 != null)
                         {
                             difActions.Add(actions);
@@ -65,11 +86,11 @@ namespace ModelAPITest.ToggleElements
                     }
                 }
             }
+            WriteHeader();
+            if (newOrAltered.Equals("new")) { WriteHeader(); }
+            else if (newOrAltered.Equals("altered")) { Console.WriteLine("\nAltered:"); }
 
-            if (newOrAltered.Equals("new")) { Console.WriteLine("\nNew Actions:"); }
-            else if (newOrAltered.Equals("altered")) { Console.WriteLine("\nAltered Actions:"); }
-
-            foreach (IServerAction actions in difActions)
+            foreach (GAction actions in difActions)
             {
                 Console.WriteLine(actions);
             }
@@ -78,13 +99,12 @@ namespace ModelAPITest.ToggleElements
             {
                 if (difActionKeys.Count() != 0)
                 {
-                    InsertIf(newe, difActionKeys);
-                    //CreateScreenPrep(newe, difScreensKeys);
+                    InsertIf(newe, difActionKeys, "defaultfeature");
                 }
             }
         }
 
-        public virtual void InsertIf(IESpace espace, List<IKey> keys)
+        public void InsertIf(IESpace espace, List<IKey> keys, string feature)
         {
             var actions = espace.GetAllDescendantsOfType<IAction>().Where(s => keys.Contains(s.ObjectKey));
             ToggleEntities t = new ToggleEntities();
@@ -96,12 +116,16 @@ namespace ModelAPITest.ToggleElements
 
             foreach (IAction sa in actions.ToList())
             {
-                var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{sa.Name}", $"FT_{sa.Name}", espace);
-                var newAction = (IServerAction)espace.Copy(sa);
+                if (feature == "defaultfeature")
+                {
+                    feature = sa.Name;
+                }
+                var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
+                var newAction = (GAction)espace.Copy(sa);
                 var oldname = sa.Name.ToString();
                 sa.Name = $"FT_{oldname}";
                 newAction.Name = oldname;
-                newAction.Public = false;
+                SetActionsPrivacy(newAction);
                 var nodes = sa.Nodes;
                 foreach (IActionNode n in nodes.ToList())
                 {
@@ -112,19 +136,19 @@ namespace ModelAPITest.ToggleElements
                     l.Delete();
                 }
                 var start = sa.CreateNode<IStartNode>();
-                var getToggle = sa.CreateNode<IExecuteServerActionNode>($"FT_{oldname}_IsOn").Below(start);
+                var getToggle = sa.CreateNode<IExecuteServerActionNode>($"FT_{feature}_IsOn").Below(start);
                 var ifToggle = sa.CreateNode<IIfNode>().Below(getToggle);
                 var doAction = sa.CreateNode<IExecuteServerActionNode>().ToTheRightOf(ifToggle);
                 var end = sa.CreateNode<IEndNode>().Below(doAction);
 
                 getToggle.Action = getToggleAction;
                 var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
-                getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{oldname}");
+                getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{feature}");
                 var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
                 getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
                 start.Target = getToggle;
 
-                ifToggle.SetCondition($"FT_{oldname}_IsOn.IsOn");
+                ifToggle.SetCondition($"FT_{feature}_IsOn.IsOn");
                 ifToggle.FalseTarget = end;
                 getToggle.Target = ifToggle;
                 doAction.Action = newAction;
@@ -142,15 +166,17 @@ namespace ModelAPITest.ToggleElements
                     {
                         assign.CreateAssignment(o.Name, $"{doAction.Name}.{o.Name}");
                     }
+
                     doAction.Target = assign;
                     assign.Target = end;
                 }
 
-
             }
 
         }
-        
-    }
 
+        protected abstract void SetActionsPrivacy(GAction action);
+        protected abstract void WriteHeader();
+    }
+    
 }
