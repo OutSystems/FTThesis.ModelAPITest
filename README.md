@@ -1,20 +1,18 @@
 # ModelAPITest
-Program for testing and exploring ModelAPI functionality, specially for Feature Toggle Thesis
+Program for transforming modules and introducing Feature Toggles, in light of Feature Toggle Thesis for FCT-UNL
 
 ## Description
 
-Simple Screens OMLs are just plain blank applications with a couple screens and WebBlocks.
+You can use the test files to test the program. The files that are up to date are stored in the folder CurrentTF. The folder TestFiles has older files for testing previous versions of this program and may not work properly.
 
-*SimpleScreensTW.oml* is for traditional web while *SimpleScreensNR.oml* is for React.
+This program encapsulates blocks, screens, server actions and client actions in feature toggles.
 
-You can use these files to test the program that lists all screens and all webblocks of an oml file.
-
-At current version, the Test Files working and more relevant are: SimpleScreensTW.1.oml and SimpleScreens5TW.1.oml for traditional, and SimpleScreensNR.1.oml and SimpleScreens5TW.1.oml for Reactive.
-
-This program now encapsulates all new blocks and screens (this last by encapsulating all links redirecting to it and a preparation/oninitialize for the screen) in a toggle.
-
-The current program is written for both **Traditional Web** and **Reactive**. Keep in mind that both omls must be in the same language
+The current program is written for both **Traditional Web** and **Reactive**. Keep in mind that both omls (if running for differential between versions) must be in the same language.
 
 ## Running
 
-For running, execute the program and then insert the desired file paths for both versions of the program, as well as the path for the output file.
+For running, execute the program and then insert the desired file paths, as well as the path for the output file, according to instructions:
+
+diff <oldFile.oml> <newFile.oml> <outputFile.oml> - for inserting toggles in new elements between old version and new version of the same OML
+OR
+features <configFile.yml> <moduleFile.oml> <outputFile.oml> - for inserting toggles in an OML according to a config file specifying feature context
