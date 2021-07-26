@@ -41,6 +41,8 @@ namespace ModelAPITest
                 traditionalBlocks.GetAllElements(module);
                 s.GetAllElements(module);
                 l.GetAllElements(module);
+                ToggleRemoteAction t = new ToggleRemoteAction();
+                t.GetToggleAction(module);
             }
             else
             {
@@ -52,6 +54,9 @@ namespace ModelAPITest
                 s.GetAllElements(module);
                 l.GetAllElements(module);
                 //c.GetAllElements(module);
+                ToggleRemoteAction t = new ToggleRemoteAction();
+                t.GetToggleAction(module);
+
 
             }
             module.Save(saveESpacePath.FullName);

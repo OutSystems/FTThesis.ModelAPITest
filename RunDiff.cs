@@ -55,7 +55,8 @@ namespace ModelAPITest
                 tradicionalBlocks.GetDiffElements(oldmodule, newmodule, "new");
                 s.GetDiffElements(oldmodule, newmodule, "new");
                 l.GetDiffElements(oldmodule, newmodule, "new");
-
+                ToggleRemoteAction t = new ToggleRemoteAction();
+                t.GetToggleAction(newmodule);
 
             }
             else
@@ -68,6 +69,9 @@ namespace ModelAPITest
                 s.GetDiffElements(oldmodule, newmodule, "new");
                 l.GetDiffElements(oldmodule, newmodule, "new");
                 //c.GetDiffElements(oldmodule, newmodule, "new");
+                ToggleRemoteAction t = new ToggleRemoteAction();
+                t.GetToggleAction(newmodule);
+
             }
 
             newmodule.Save(saveESpacePath.FullName);

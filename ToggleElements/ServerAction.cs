@@ -38,10 +38,11 @@ namespace ModelAPITest.ToggleElements
             List<IServerAction> difActions = new List<IServerAction>();
             List<IKey> difActionKeys = new List<IKey>();
 
-            foreach (IServerAction actions in listNewServerActions)
+            foreach (IServerAction actions in listNewServerActions.ToList())
             {
-                if (actions.Name != "GetFTValue")
-                {
+
+                if(actions.Name != "GetFTValue"){
+
                     var skey = actions.ObjectKey;
                     var modDate = ((IFlow)actions).LastModifiedDate;
                     if (newOrAltered.Equals("new"))
@@ -134,7 +135,7 @@ namespace ModelAPITest.ToggleElements
                 {
                     doAction.SetArgumentValue(i, i.Name);
                 }
-                if (newAction.OutputParameters.Count() != 0)
+                if (newAction.OutputParameters.Count() != 0 )
                 {
                     var assign = sa.CreateNode<IAssignNode>().Below(doAction);
                     end.Below(assign);
@@ -142,10 +143,11 @@ namespace ModelAPITest.ToggleElements
                     {
                         assign.CreateAssignment(o.Name, $"{doAction.Name}.{o.Name}");
                     }
+                    
                     doAction.Target = assign;
                     assign.Target = end;
                 }
-
+                
 
             }
 
