@@ -18,3 +18,10 @@ diff <oldFile.oml> <newFile.oml> <outputFile.oml> - for inserting toggles in new
 OR
 
 features <configFile.yml> <moduleFile.oml> <outputFile.oml> - for inserting toggles in an OML according to a config file specifying feature context
+
+## Branches
+
+**Master** is the main program, running the thesis base transformation
+
+**FullApplications** runs the transformation for an application and not only one module. This composes thesis' future work.
+
