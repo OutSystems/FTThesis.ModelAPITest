@@ -3,7 +3,7 @@ Program for transforming modules and introducing Feature Toggles, in light of Fe
 
 ## Description
 
-You can use the test files to test the program. The files that are up to date are stored in the folder CurrentTF. The folder TestFiles has older files for testing previous versions of this program and may not work properly.
+You can use the test files to test the program. The files that are up to date are stored in the folder **CurrentTF**. The folder TestFiles has older files for testing previous versions of this program and may not work properly.
 
 This program encapsulates blocks, screens, server actions and client actions in feature toggles.
 
