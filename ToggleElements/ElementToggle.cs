@@ -11,8 +11,8 @@ namespace ModelAPITest
 
         void GetAllElements(IESpace newe);
 
-        void InsertIf(IESpace espace, List<IKey> keys, String feature);
+        void InsertIf(IESpace espace, List<IKey> keys, String feature, String prefix);
 
-        void GetAllElementsFromList(IESpace newe, List<string> elements, String feature);
+        void GetAllElementsFromList(IESpace newe, List<string> elements, String feature, String prefix);
     }
 }

@@ -27,11 +27,11 @@ namespace ModelAPITest.ToggleElements
 
             if (actionKeys.Count() != 0)
             {
-                InsertIf(newe, actionKeys, "defaultfeature");
+                InsertIf(newe, actionKeys, "defaultfeature", newe.Name);
             }
         }
 
-        public void GetAllElementsFromList(IESpace newe, List<string> elements, string feature)
+        public void GetAllElementsFromList(IESpace newe, List<string> elements, string feature, string prefix)
         {
             var listactions = newe.GetAllDescendantsOfType<GAction>().Where(b => elements.Contains(b.Name)); ;
 
@@ -46,7 +46,7 @@ namespace ModelAPITest.ToggleElements
 
             if (actionKeys.Count() != 0)
             {
-                InsertIf(newe, actionKeys, feature);
+                InsertIf(newe, actionKeys, feature, prefix);
             }
         }
 
@@ -99,12 +99,12 @@ namespace ModelAPITest.ToggleElements
             {
                 if (difActionKeys.Count() != 0)
                 {
-                    InsertIf(newe, difActionKeys, "defaultfeature");
+                    InsertIf(newe, difActionKeys, "defaultfeature", newe.Name);
                 }
             }
         }
 
-        public void InsertIf(IESpace espace, List<IKey> keys, string feature)
+        public void InsertIf(IESpace espace, List<IKey> keys, string feature, string prefix)
         {
             var actions = espace.GetAllDescendantsOfType<IAction>().Where(s => keys.Contains(s.ObjectKey));
             ToggleEntities t = new ToggleEntities();
@@ -120,7 +120,7 @@ namespace ModelAPITest.ToggleElements
                 {
                     feature = sa.Name;
                 }
-                var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
+                var rec = t.CreateRecord(entity, $"FT_{prefix}_{feature}", $"FT_{feature}", espace);
                 var newAction = (GAction)espace.Copy(sa);
                 var oldname = sa.Name.ToString();
                 sa.Name = $"FT_{oldname}";
@@ -143,7 +143,7 @@ namespace ModelAPITest.ToggleElements
 
                 getToggle.Action = getToggleAction;
                 var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
-                getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{feature}");
+                getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{prefix}_{feature}");
                 var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
                 getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
                 start.Target = getToggle;

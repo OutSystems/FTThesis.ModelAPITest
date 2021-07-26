@@ -23,7 +23,7 @@ namespace ModelAPITest {
             return o.SourceBlock.Name.ToString();
         }
 
-        protected override void CreateIf(IPlaceholderContentWidget p, IMobileBlockInstanceWidget o, IESpace espace, String feature)
+        protected override void CreateIf(IPlaceholderContentWidget p, IMobileBlockInstanceWidget o, IESpace espace, String feature, String prefix)
         {
             var name = GetName(o);
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>();
@@ -50,7 +50,7 @@ namespace ModelAPITest {
 
                         getToggle.Action = getToggleAction;
                         var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
-                        getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{feature}");
+                        getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{prefix}_{feature}");
                         var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
                         getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
                         start.Target = getToggle;
@@ -72,7 +72,7 @@ namespace ModelAPITest {
                             var getToggle = action.CreateNode<IExecuteServerActionNode>($"FT_{feature}_IsOn").Below(start);
                             getToggle.Action = getToggleAction;
                             var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
-                            getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{feature}");
+                            getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{prefix}_{feature}");
                             var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
                             getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
                             var startTarget = start.Target;
