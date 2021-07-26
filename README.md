@@ -1,4 +1,4 @@
-# ModelAPITest
+# Feature Toggle Thesis - Transformation
 Program for transforming modules and introducing Feature Toggles, in light of Feature Toggle Thesis for FCT-UNL
 
 ## Description
