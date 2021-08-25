@@ -73,7 +73,7 @@ namespace ModelAPITest {
                     }
                     var parent = (GParent)o.Parent;
                     var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
-                    CreateIf(parent, o, espace, feature);
+                    EncapsulatedInIf(parent, o, espace, feature);
                     o.Delete();
                    
                 } else {
@@ -86,7 +86,7 @@ namespace ModelAPITest {
 
         protected abstract string GetName(GObjectSignature o);
 
-        protected abstract void CreateIf(GParent p, GObjectSignature o, IESpace espace, String feature);
+        protected abstract void EncapsulatedInIf(GParent p, GObjectSignature o, IESpace espace, String feature);
 
         protected abstract IKey GetObjectKey(GObjectSignature s);
 

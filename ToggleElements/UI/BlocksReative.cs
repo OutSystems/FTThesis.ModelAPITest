@@ -23,7 +23,7 @@ namespace ModelAPITest {
             return o.SourceBlock.Name.ToString();
         }
 
-        protected override void CreateIf(IPlaceholderContentWidget p, IMobileBlockInstanceWidget o, IESpace espace, String feature)
+        protected override void EncapsulatedInIf(IPlaceholderContentWidget p, IMobileBlockInstanceWidget o, IESpace espace, String feature)
         {
             var name = GetName(o);
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>();

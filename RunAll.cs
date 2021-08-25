@@ -8,9 +8,9 @@ using System.Text;
 
 namespace ModelAPITest
 {
-    class RunAll
+    class RunAll : FeatureToggler
     {
-        public static void RunForAllElements(string[] args)
+        public void Run(string[] args)
         {
             var ESpacePath = args[1];
 
@@ -65,7 +65,7 @@ namespace ModelAPITest
         }
 
 
-        private static bool IsTraditional(IESpace module)
+        public bool IsTraditional(IESpace module)
 
         {
             var themes = module.GetAllDescendantsOfType<IWebTheme>();

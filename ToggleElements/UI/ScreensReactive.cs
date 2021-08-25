@@ -22,7 +22,7 @@ namespace ModelAPITest
             return l.OnClick.Destination;
         }
 
-        protected override void CreateIf(IPlaceholderContentWidget p, ILink l, IESpace espace, String feature)
+        protected override void EncapsulatedInIf(IPlaceholderContentWidget p, ILink l, IESpace espace, String feature)
         {
             var name = GetDestinationName(l);
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>();
@@ -51,7 +51,7 @@ namespace ModelAPITest
             l.Delete();
         }
 
-        protected override void CreateIf2(IContent p, ILink l, IESpace espace, String feature)
+        protected override void EncapsulatedInIf2(IContent p, ILink l, IESpace espace, String feature)
         {
             var name = GetDestinationName(l);
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>();

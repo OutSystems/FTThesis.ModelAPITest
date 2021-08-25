@@ -8,9 +8,9 @@ using System.Text;
 
 namespace ModelAPITest
 {
-    class RunDiff
+    class RunDiff : FeatureToggler
     {
-        public static void RunForDiffElements(string[] args)
+        public void Run(string[] args)
         {
             var oldESpacePath = args[1];
             var newESpacePath = args[2];
@@ -79,7 +79,7 @@ namespace ModelAPITest
             //Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
         }
 
-        private static bool IsTraditional(IESpace module)
+        public bool IsTraditional(IESpace module)
 
         {
             var themes = module.GetAllDescendantsOfType<IWebTheme>();

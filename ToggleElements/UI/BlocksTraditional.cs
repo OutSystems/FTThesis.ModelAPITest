@@ -19,7 +19,7 @@ namespace ModelAPITest
             return o.SourceBlock.Name;
         }
 
-        protected override void CreateIf(IPlaceholderContentWidget p, IWebBlockInstanceWidget o, IESpace eSpace, String feature)
+        protected override void EncapsulatedInIf(IPlaceholderContentWidget p, IWebBlockInstanceWidget o, IESpace eSpace, String feature)
         {
             ToggleAction a = new ToggleAction();
             var action = a.GetToggleAction(eSpace);

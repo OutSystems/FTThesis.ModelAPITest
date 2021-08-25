@@ -125,15 +125,15 @@ namespace ModelAPITest
                 {
                     var parent = (GParent1)l.Parent;
                     var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
-                    
-                    CreateIf(parent, l, espace, feature);
+
+                    EncapsulatedInIf(parent, l, espace, feature);
                 }
                 else if (l.Parent is GParent2)
                 {
                     var parent = (GParent2)l.Parent;
                     var rec =t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
-                    
-                    CreateIf2(parent, l, espace, feature);
+
+                    EncapsulatedInIf2(parent, l, espace, feature);
                 }
                 else
                 {
@@ -142,9 +142,9 @@ namespace ModelAPITest
             }
         }
 
-        protected abstract void CreateIf(GParent1 p, GLink o, IESpace eSpace, String feature);
+        protected abstract void EncapsulatedInIf(GParent1 p, GLink o, IESpace eSpace, String feature);
 
-        protected abstract void CreateIf2(GParent2 p, GLink o, IESpace eSpace, String feature);
+        protected abstract void EncapsulatedInIf2(GParent2 p, GLink o, IESpace eSpace, String feature);
 
         protected abstract void CreateScreenPrep(IESpace espace, List<IKey> screenskeys, String feature);
 

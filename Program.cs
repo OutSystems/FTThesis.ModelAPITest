@@ -51,17 +51,20 @@ namespace ModelAPITest
 
             if (args[0] == "diff" & args.Length == 4)
             {
-                RunDiff.RunForDiffElements(args);
+                var runDiff = new RunDiff();
+                runDiff.Run(args);
             }
 
             if (args[0] == "all" & args.Length == 3)
             {
-                RunAll.RunForAllElements(args);
+                var runAll = new RunAll();
+                runAll.Run(args);
             }
 
              if (args[0] == "features" & args.Length == 4)
             {
-                RunContext.RunForSpecificFeatures(args);
+                var runContext = new RunContext();
+                runContext.Run(args);
             }
 
         }

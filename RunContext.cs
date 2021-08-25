@@ -12,9 +12,9 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace ModelAPITest
 {
-    class RunContext
+    class RunContext : FeatureToggler
     {
-        public static void RunForSpecificFeatures(string[] args)
+        public void Run(string[] args)
         {
             string contents = File.ReadAllText(args[1]);
 
@@ -97,7 +97,7 @@ namespace ModelAPITest
             //Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
         }
 
-        private static bool IsTraditional(IESpace module)
+        public bool IsTraditional(IESpace module)
 
         {
             var themes = module.GetAllDescendantsOfType<IWebTheme>();
