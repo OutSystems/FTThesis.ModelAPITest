@@ -5,13 +5,13 @@ using System.Text;
 
 namespace ModelAPITest
 {
-    interface ElementToggle
+    interface ToggleableElement
     {
         void GetDiffElements(IESpace old, IESpace newe, String newOrAltered);
 
         void GetAllElements(IESpace newe);
 
-        void InsertIf(IESpace espace, List<IKey> keys, String feature);
+        void ToggleElement(IESpace espace, List<IKey> keys, String feature);
 
         void GetAllElementsFromList(IESpace newe, List<string> elements, String feature);
     }

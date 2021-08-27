@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ModelAPITest
 {
-    class RunDiff : FeatureToggler
+    class DifferentElementsToggler : FeatureToggler
     {
         public void Run(string[] args)
         {
@@ -53,8 +53,8 @@ namespace ModelAPITest
 
             if (isoldtraditional)
             {
-                BlocksTraditional tradicionalBlocks = new BlocksTraditional();
-                ScreensTraditional s = new ScreensTraditional();
+                BlockTraditional tradicionalBlocks = new BlockTraditional();
+                ScreenTraditional s = new ScreenTraditional();
                 ServerAction l = new ServerAction();
                 tradicionalBlocks.GetDiffElements(oldmodule, newmodule, "new");
                 s.GetDiffElements(oldmodule, newmodule, "new");
@@ -65,8 +65,8 @@ namespace ModelAPITest
             }
             else
             {
-                BlocksReative reactiveBlocks = new BlocksReative();
-                ScreensReactive s = new ScreensReactive();
+                BlockReative reactiveBlocks = new BlockReative();
+                ScreenReactive s = new ScreenReactive();
                 ServerAction l = new ServerAction();
                 //ClientAction c = new ClientAction();
                 reactiveBlocks.GetDiffElements(oldmodule, newmodule, "new");

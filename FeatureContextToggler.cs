@@ -12,7 +12,7 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace ModelAPITest
 {
-    class RunContext : FeatureToggler
+    class FeatureContextToggler : FeatureToggler
     {
         public void Run(string[] args)
         {
@@ -58,8 +58,8 @@ namespace ModelAPITest
 
             if (isoldtraditional)
             {
-                BlocksTraditional traditionalBlocks = new BlocksTraditional();
-                ScreensTraditional s = new ScreensTraditional();
+                BlockTraditional traditionalBlocks = new BlockTraditional();
+                ScreenTraditional s = new ScreenTraditional();
                 ServerAction l = new ServerAction();
                 //FTRemoteManagementAction t = new FTRemoteManagementAction();
                 
@@ -76,8 +76,8 @@ namespace ModelAPITest
             }
             else
             {
-                BlocksReative reactiveBlocks = new BlocksReative();
-                ScreensReactive s = new ScreensReactive();
+                BlockReative reactiveBlocks = new BlockReative();
+                ScreenReactive s = new ScreenReactive();
                 ServerAction l = new ServerAction();
                 //ClientAction c = new ClientAction();
                 //FTRemoteManagementAction t = new FTRemoteManagementAction();

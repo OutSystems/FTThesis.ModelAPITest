@@ -9,7 +9,7 @@ using System.Text;
 
 namespace ModelAPITest
 {
-    class BlocksTraditional : BlocksGeneric<IWebBlock, IWebBlockInstanceWidget, IWebScreen, IPlaceholderContentWidget>
+    class BlockTraditional : BlockGeneric<IWebBlock, IWebBlockInstanceWidget, IWebScreen, IPlaceholderContentWidget>
     {
         protected override IKey GetObjectKey(IWebBlockInstanceWidget s) {
             return s.SourceBlock.ObjectKey;

@@ -8,7 +8,7 @@ using ServiceStudio.Plugin.REST;
 
 namespace ModelAPITest.ToggleElements
 {
-    class ToggleEntities
+    class ToggleEntity
     {
         private const string TogglesEntity = "FeatureToggles";
         public static IStaticEntity GetTogglesEntity(IESpace espace)

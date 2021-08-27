@@ -11,7 +11,7 @@ using System.Text;
 
 namespace ModelAPITest
 {
-    class ScreensTraditional : ScreensGeneric<ILinkWidget, IWebScreen, IPlaceholderContentWidget, IContainerWidget>
+    class ScreenTraditional : ScreenGeneric<ILinkWidget, IWebScreen, IPlaceholderContentWidget, IContainerWidget>
     {
         protected override IObjectSignature GetDestination(ILinkWidget l)
         {

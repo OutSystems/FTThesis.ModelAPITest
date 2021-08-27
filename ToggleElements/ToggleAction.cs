@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ModelAPITest.ToggleElements
 {
-    interface ToggleActions
+    interface ToggleAction
     {
         IAction GetToggleAction(IESpace espace);
 

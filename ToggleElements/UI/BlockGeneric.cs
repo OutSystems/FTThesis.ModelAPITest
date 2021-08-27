@@ -10,7 +10,7 @@ using System.Text;
 using ModelAPITest.ToggleElements;
 
 namespace ModelAPITest {
-    abstract class BlocksGeneric<GBlock, GObjectSignature, GScreen, GParent> : ElementToggle
+    abstract class BlockGeneric<GBlock, GObjectSignature, GScreen, GParent> : ToggleableElement
         where GBlock : IBlock
         where GObjectSignature: IObjectSignature
         where GScreen : IScreen
@@ -31,7 +31,7 @@ namespace ModelAPITest {
 
             if (difBlocksKeys.Count() != 0)
             {
-                InsertIf(newe, difBlocksKeys, "defaultfeature");
+                ToggleElement(newe, difBlocksKeys, "defaultfeature");
             }
         }
 
@@ -71,7 +71,7 @@ namespace ModelAPITest {
             if (newOrAltered.Equals("new")) {
 
                 if (difBlocksKeys.Count() != 0) {
-                    InsertIf(newe, difBlocksKeys, "defaultfeature");
+                    ToggleElement(newe, difBlocksKeys, "defaultfeature");
                 }
             }
            
@@ -93,11 +93,11 @@ namespace ModelAPITest {
 
             if (difBlocksKeys.Count() != 0)
             {
-                InsertIf(newe, difBlocksKeys, feature);
+                ToggleElement(newe, difBlocksKeys, feature);
             }
         }
 
-        public virtual void InsertIf(IESpace espace, List<IKey> keys, String feature) {
+        public virtual void ToggleElement(IESpace espace, List<IKey> keys, String feature) {
             var bl = espace.GetAllDescendantsOfType<GObjectSignature>().Where(s => keys.Contains(GetObjectKey(s)));
             ToggleManager manager = new ToggleManager();
             manager.GetToggleValueRetrievalAction(espace);

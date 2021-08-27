@@ -12,7 +12,7 @@ using System.Text;
 
 namespace ModelAPITest.ToggleElements
 {
-    class FTRemoteManagementAction : ToggleActions
+    class ManagementPlatformRemoteToggleCreation : ToggleAction
     {
         public IAction GetToggleAction(IESpace espace)
         {

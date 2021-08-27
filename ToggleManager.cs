@@ -11,19 +11,19 @@ namespace ModelAPITest
 {
     class ToggleManager
     {
-        FTValueRetrievalAction toggleAction;
-        FTRemoteManagementAction toggleRemote;
+        ToggleValueRetrieval toggleAction;
+        ManagementPlatformRemoteToggleCreation toggleRemote;
 
         public ToggleManager(){
-            toggleAction = new FTValueRetrievalAction();
-            toggleRemote = new FTRemoteManagementAction();
+            toggleAction = new ToggleValueRetrieval();
+            toggleRemote = new ManagementPlatformRemoteToggleCreation();
         }
 
 
         public IRecord CreateToggleRecord(String key, String label, IESpace espace)
         {
-            var entity = ToggleEntities.GetTogglesEntity(espace);
-            return ToggleEntities.CreateRecord(entity, key, label);
+            var entity = ToggleEntity.GetTogglesEntity(espace);
+            return ToggleEntity.CreateRecord(entity, key, label);
 
         }
 

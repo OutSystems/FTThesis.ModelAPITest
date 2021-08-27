@@ -9,7 +9,7 @@ using OutSystems.Model.UI.Web;
 
 namespace ModelAPITest.ToggleElements
 {
-    class FTValueRetrievalAction : ToggleActions
+    class ToggleValueRetrieval : ToggleAction
     {
         private const string TogglesEntity = "FeatureToggles";
 
@@ -71,9 +71,9 @@ namespace ModelAPITest.ToggleElements
 
         private IExecuteServerActionNode CreateExecuteActionNode(IESpace espace, IAction action)
         {
+            ToggleManager manager = new ToggleManager();
             var executeaction = action.CreateNode<IExecuteServerActionNode>();
-            var lib = espace.References.Single(a => a.Name == "FeatureToggle_Lib");
-            var getToggleAction = (IServerActionSignature)lib.ServerActions.Single(a => a.Name == "FeatureToggle_IsOn");/////////////////////////////////////////////
+            var getToggleAction = manager.GetPlatformToggleRetrievalAction(espace);
             executeaction.Action = getToggleAction;
             var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
             executeaction.SetArgumentValue(keyParam, "FTType");

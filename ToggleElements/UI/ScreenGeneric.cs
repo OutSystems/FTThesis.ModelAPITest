@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace ModelAPITest
 {
-    abstract class ScreensGeneric<GLink, GScreen, GParent1, GParent2> : ElementToggle
+    abstract class ScreenGeneric<GLink, GScreen, GParent1, GParent2> : ToggleableElement
         where GLink : IObjectSignature
         where GScreen : IScreen
         where GParent1 : IObjectSignature
@@ -30,7 +30,7 @@ namespace ModelAPITest
 
             if (screensKeys.Count() != 0)
             {
-                InsertIf(newe, screensKeys, "defaultfeature");
+                ToggleElement(newe, screensKeys, "defaultfeature");
                 CreateScreenPrep(newe, screensKeys, "defaultfeature");
             }
         }
@@ -50,7 +50,7 @@ namespace ModelAPITest
 
             if (screensKeys.Count() != 0)
             {
-                InsertIf(newe, screensKeys, feature);
+                ToggleElement(newe, screensKeys, feature);
                 CreateScreenPrep(newe, screensKeys, feature);
             }
         }
@@ -101,19 +101,17 @@ namespace ModelAPITest
             {
                 if (difScreensKeys.Count() != 0)
                 {
-                    InsertIf(newe, difScreensKeys, "defaultfeature");
+                    ToggleElement(newe, difScreensKeys, "defaultfeature");
                     CreateScreenPrep(newe, difScreensKeys, "defaultfeature");
                 }
             }
         }
 
-        public void InsertIf(IESpace espace, List<IKey> keys, String feature)
+        public void ToggleElement(IESpace espace, List<IKey> keys, String feature)
         {
             var links = espace.GetAllDescendantsOfType<GLink>().Where(s => keys.Contains(GetDestination(s).ObjectKey));
             links = InsertIfplus(espace, keys, links);
             ToggleManager manager = new ToggleManager();
-            //FTValueRetrievalAction a = new FTValueRetrievalAction(); 
-            //var entity = manager.GetTogglesEntity(espace);
             var action = manager.GetToggleValueRetrievalAction(espace);
             foreach (GLink l in links.ToList())
             {
@@ -121,17 +119,19 @@ namespace ModelAPITest
                 {
                     feature = GetDestinationName(l);
                 }
+                var key = manager.GetToggleKey(espace.Name, feature);
+                var name = manager.GetToggleName(feature);
                 if (l.Parent is GParent1)
                 {
                     var parent = (GParent1)l.Parent;
-                    var rec = manager.CreateToggleRecord(manager.GetToggleKey(espace.Name, feature), manager.GetToggleName(feature), espace);
+                    var rec = manager.CreateToggleRecord(key, name, espace);
 
                     EncapsulatedInIf(parent, l, espace, feature);
                 }
                 else if (l.Parent is GParent2)
                 {
                     var parent = (GParent2)l.Parent;
-                    var rec =manager.CreateToggleRecord(manager.GetToggleKey(espace.Name, feature), manager.GetToggleName(feature), espace);
+                    var rec =manager.CreateToggleRecord(key, name, espace);
 
                     EncapsulatedInIf2(parent, l, espace, feature);
                 }

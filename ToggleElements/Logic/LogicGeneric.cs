@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ModelAPITest.ToggleElements
 {
-    abstract class LogicGeneric<GAction> : ElementToggle
+    abstract class LogicGeneric<GAction> : ToggleableElement
         where GAction : IAction
 
     {
@@ -26,7 +26,7 @@ namespace ModelAPITest.ToggleElements
 
             if (actionKeys.Count() != 0)
             {
-                InsertIf(newe, actionKeys, "defaultfeature");
+                ToggleElement(newe, actionKeys, "defaultfeature");
             }
         }
 
@@ -44,7 +44,7 @@ namespace ModelAPITest.ToggleElements
 
             if (actionKeys.Count() != 0)
             {
-                InsertIf(newe, actionKeys, feature);
+                ToggleElement(newe, actionKeys, feature);
             }
         }
 
@@ -97,12 +97,12 @@ namespace ModelAPITest.ToggleElements
             {
                 if (difActionKeys.Count() != 0)
                 {
-                    InsertIf(newe, difActionKeys, "defaultfeature");
+                    ToggleElement(newe, difActionKeys, "defaultfeature");
                 }
             }
         }
 
-        public void InsertIf(IESpace espace, List<IKey> keys, string feature)
+        public void ToggleElement(IESpace espace, List<IKey> keys, string feature)
         {
             var actions = espace.GetAllDescendantsOfType<IAction>().Where(s => keys.Contains(s.ObjectKey));
             ToggleManager manager = new ToggleManager();
@@ -115,59 +115,91 @@ namespace ModelAPITest.ToggleElements
                 {
                     feature = sa.Name;
                 }
+
                 var rec = manager.CreateToggleRecord(manager.GetToggleKey(espace.Name,feature), manager.GetToggleName(feature), espace);
-                var newAction = (GAction)espace.Copy(sa);
-                var oldname = sa.Name.ToString();
-                sa.Name = manager.GetToggleName(oldname);
-                newAction.Name = oldname;
-                SetActionsPrivacy(newAction);
-                var nodes = sa.Nodes;
-                foreach (IActionNode n in nodes.ToList())
-                {
-                    n.Delete();
-                }
-                foreach (ILocalVariable l in sa.LocalVariables.ToList())
-                {
-                    l.Delete();
-                }
-                var start = sa.CreateNode<IStartNode>();
-                var getToggle = sa.CreateNode<IExecuteServerActionNode>(manager.GetFeatureToggleIsOnActionString(feature)).Below(start);
-                var ifToggle = sa.CreateNode<IIfNode>().Below(getToggle);
-                var doAction = sa.CreateNode<IExecuteServerActionNode>().ToTheRightOf(ifToggle);
-                var end = sa.CreateNode<IEndNode>().Below(doAction);
-
-                getToggle.Action = getToggleAction;
-                var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
-                getToggle.SetArgumentValue(keyParam, manager.GetToggleRecord(espace.Name,feature));
-                var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
-                getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
-                start.Target = getToggle;
-
-                ifToggle.SetCondition(manager.GetFeatureToggleIsOnOutputString(feature));
-                ifToggle.FalseTarget = end;
-                getToggle.Target = ifToggle;
-                doAction.Action = newAction;
-                doAction.Target = end;
-                ifToggle.TrueTarget = doAction;
-                foreach (IInputParameter i in newAction.InputParameters)
-                {
-                    doAction.SetArgumentValue(i, i.Name);
-                }
-                if (newAction.OutputParameters.Count() != 0)
-                {
-                    var assign = sa.CreateNode<IAssignNode>().Below(doAction);
-                    end.Below(assign);
-                    foreach (IOutputParameter o in sa.OutputParameters)
-                    {
-                        assign.CreateAssignment(o.Name, $"{doAction.Name}.{o.Name}");
-                    }
-
-                    doAction.Target = assign;
-                    assign.Target = end;
-                }
-
+                var newAction = CopyAction(espace, sa, manager);
+                ResetAction(sa);
+                CreateIntermediaryAction(sa, feature, espace, manager, newAction);
             }
+        }
+        private GAction CopyAction(IESpace espace, IAction sa, ToggleManager manager)
+        {
+            var newAction = (GAction)espace.Copy(sa);
+            var oldname = sa.Name.ToString();
+            sa.Name = manager.GetToggleName(oldname);
+            newAction.Name = oldname;
+            SetActionsPrivacy(newAction);
+            return newAction;
+        }
 
+        private void ResetAction(IAction sa)
+        {
+            var nodes = sa.Nodes;
+            foreach (IActionNode n in nodes.ToList())
+            {
+                n.Delete();
+            }
+            foreach (ILocalVariable l in sa.LocalVariables.ToList())
+            {
+                l.Delete();
+            }
+        }
+
+        private void CreateIntermediaryAction(IAction sa, String feature, IESpace espace, ToggleManager manager, GAction newAction)
+        {
+            var start = sa.CreateNode<IStartNode>();
+            var getToggle = CreateFetchToggleActionNode(sa, espace, feature, manager).Below(start);
+            var ifToggle = sa.CreateNode<IIfNode>().Below(getToggle);
+            ifToggle.SetCondition(manager.GetFeatureToggleIsOnOutputString(feature));
+            var doAction = CreateCallActionNode(sa, newAction).ToTheRightOf(ifToggle);
+            var end = sa.CreateNode<IEndNode>().Below(doAction);
+            start.Target = getToggle;
+            getToggle.Target = ifToggle;
+            ifToggle.TrueTarget = doAction;
+            ifToggle.FalseTarget = end;
+            doAction.Target = end;
+            if (newAction.OutputParameters.Count() != 0)
+            {
+                var assign = AssignOutputValues(sa, doAction);
+                end.Below(assign);
+                doAction.Target = assign;
+                assign.Target = end;
+            }
+        }
+
+        private IExecuteServerActionNode CreateFetchToggleActionNode(IAction sa, IESpace espace, String feature, ToggleManager manager)
+        {
+            var getToggleAction = manager.GetPlatformToggleRetrievalAction(espace);
+            var actionName = manager.GetFeatureToggleIsOnActionString(feature);
+            var toggleRecord = manager.GetToggleRecord(espace.Name, feature);
+            var getToggle = sa.CreateNode<IExecuteServerActionNode>(actionName);
+            getToggle.Action = getToggleAction;
+            var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
+            getToggle.SetArgumentValue(keyParam, toggleRecord);
+            var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
+            getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
+            return getToggle;
+        }
+
+        private IExecuteServerActionNode CreateCallActionNode(IAction sa, GAction newAction)
+        {
+            var doAction = sa.CreateNode<IExecuteServerActionNode>();
+            doAction.Action = newAction;
+            foreach (IInputParameter i in newAction.InputParameters)
+            {
+                doAction.SetArgumentValue(i, i.Name);
+            }
+            return doAction;
+        }
+
+        private IAssignNode AssignOutputValues(IAction sa, IExecuteServerActionNode doAction)
+        {
+            var assign = sa.CreateNode<IAssignNode>().Below(doAction);
+            foreach (IOutputParameter o in sa.OutputParameters)
+            {
+                assign.CreateAssignment(o.Name, $"{doAction.Name}.{o.Name}");
+            }
+            return assign;
         }
 
         protected abstract void SetActionsPrivacy(GAction action);
