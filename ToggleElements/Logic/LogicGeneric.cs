@@ -22,7 +22,6 @@ namespace ModelAPITest.ToggleElements
             {
                 Console.WriteLine(action);
                 actionKeys.Add(action.ObjectKey);
-
             }
 
             if (actionKeys.Count() != 0)
@@ -41,7 +40,6 @@ namespace ModelAPITest.ToggleElements
             {
                 Console.WriteLine(action);
                 actionKeys.Add(action.ObjectKey);
-
             }
 
             if (actionKeys.Count() != 0)
@@ -107,12 +105,9 @@ namespace ModelAPITest.ToggleElements
         public void InsertIf(IESpace espace, List<IKey> keys, string feature)
         {
             var actions = espace.GetAllDescendantsOfType<IAction>().Where(s => keys.Contains(s.ObjectKey));
-            ToggleEntities t = new ToggleEntities();
-            ToggleAction a = new ToggleAction();
-            var entity = t.GetTogglesEntity(espace);
-            var action = a.GetToggleAction(espace);
-            var lib = espace.References.Single(a => a.Name == "FeatureToggle_Lib");
-            var getToggleAction = (IServerActionSignature)lib.ServerActions.Single(a => a.Name == "FeatureToggle_IsOn");
+            ToggleManager manager = new ToggleManager();
+            manager.GetToggleValueRetrievalAction(espace);
+            var getToggleAction = manager.GetPlatformToggleRetrievalAction(espace);
 
             foreach (IAction sa in actions.ToList())
             {
@@ -120,10 +115,10 @@ namespace ModelAPITest.ToggleElements
                 {
                     feature = sa.Name;
                 }
-                var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
+                var rec = manager.CreateToggleRecord(manager.GetToggleKey(espace.Name,feature), manager.GetToggleName(feature), espace);
                 var newAction = (GAction)espace.Copy(sa);
                 var oldname = sa.Name.ToString();
-                sa.Name = $"FT_{oldname}";
+                sa.Name = manager.GetToggleName(oldname);
                 newAction.Name = oldname;
                 SetActionsPrivacy(newAction);
                 var nodes = sa.Nodes;
@@ -136,19 +131,19 @@ namespace ModelAPITest.ToggleElements
                     l.Delete();
                 }
                 var start = sa.CreateNode<IStartNode>();
-                var getToggle = sa.CreateNode<IExecuteServerActionNode>($"FT_{feature}_IsOn").Below(start);
+                var getToggle = sa.CreateNode<IExecuteServerActionNode>(manager.GetFeatureToggleIsOnActionString(feature)).Below(start);
                 var ifToggle = sa.CreateNode<IIfNode>().Below(getToggle);
                 var doAction = sa.CreateNode<IExecuteServerActionNode>().ToTheRightOf(ifToggle);
                 var end = sa.CreateNode<IEndNode>().Below(doAction);
 
                 getToggle.Action = getToggleAction;
                 var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
-                getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{feature}");
+                getToggle.SetArgumentValue(keyParam, manager.GetToggleRecord(espace.Name,feature));
                 var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
                 getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
                 start.Target = getToggle;
 
-                ifToggle.SetCondition($"FT_{feature}_IsOn.IsOn");
+                ifToggle.SetCondition(manager.GetFeatureToggleIsOnOutputString(feature));
                 ifToggle.FalseTarget = end;
                 getToggle.Target = ifToggle;
                 doAction.Action = newAction;

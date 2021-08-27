@@ -24,6 +24,7 @@ namespace ModelAPITest
 
         protected override void EncapsulatedInIf(IPlaceholderContentWidget p, ILink l, IESpace espace, String feature)
         {
+            ToggleManager manager = new ToggleManager();
             var name = GetDestinationName(l);
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>();
             foreach(IMobileScreen s in screens)
@@ -46,13 +47,14 @@ namespace ModelAPITest
             }
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
             instanceIf.SetCondition($"GetToggles.IsDataFetched and GetToggles.FT_{feature}");
-            instanceIf.Name = $"If_FT_{feature}_{name}";
+            instanceIf.Name = manager.GetIfWidgetName(feature,name);
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
         }
 
         protected override void EncapsulatedInIf2(IContent p, ILink l, IESpace espace, String feature)
         {
+            ToggleManager manager = new ToggleManager();
             var name = GetDestinationName(l);
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>();
             foreach (IMobileScreen s in screens)
@@ -74,15 +76,14 @@ namespace ModelAPITest
             }
             var instanceIf = p.CreateWidget<OutSystems.Model.UI.Mobile.Widgets.IIfWidget>();
             instanceIf.SetCondition($"GetToggles.IsDataFetched and GetToggles.FT_{feature}");
-            instanceIf.Name = $"If_FT_{feature}_{name}";
+            instanceIf.Name = manager.GetIfWidgetName(feature, name);
             instanceIf.TrueBranch.Copy(l);
             l.Delete();
         }
 
         protected override void CreateScreenPrep(IESpace espace, List<IKey> screenskeys, String feature)
         {
-            ToggleEntities t = new ToggleEntities();
-            var entity = t.GetTogglesEntity(espace);
+            ToggleManager manager = new ToggleManager();
 
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>().Where(s => screenskeys.Contains(s.ObjectKey));
 
@@ -92,7 +93,7 @@ namespace ModelAPITest
                 {
                     feature = sc.Name;
                 }
-                var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
+                var rec = manager.CreateToggleRecord(manager.GetToggleKey(espace.Name,feature), manager.GetToggleName(feature), espace);
                 var dataaction = CreateDataActionScreen(espace, sc, null, feature);
                 var ongetdata = dataaction.GetAllDescendantsOfType<IUILifeCycleEvent>().Single(e => e.GetType().ToString().Contains("OnAfterFetch"));
                 IScreenAction action = (IScreenAction)ongetdata.Destination;
@@ -159,12 +160,13 @@ namespace ModelAPITest
 
         private void CreateDataAction(IESpace espace, ILink l, IDataAction oninitaction, String sname, String feature)
         {
+            ToggleManager manager = new ToggleManager();
+
             var start = oninitaction.CreateNode<IStartNode>();
             var getToggle = oninitaction.CreateNode<IExecuteServerActionNode>().Below(start);
             var end = oninitaction.CreateNode<IEndNode>();
 
-            var lib = espace.References.Single(a => a.Name == "FeatureToggle_Lib");
-            var getToggleAction = (IServerActionSignature)lib.ServerActions.Single(a => a.Name == "FeatureToggle_IsOn");
+            var getToggleAction = manager.GetPlatformToggleRetrievalAction(espace);
             getToggle.Action = getToggleAction;
             start.Target = getToggle;
 
@@ -179,15 +181,20 @@ namespace ModelAPITest
             {
                 destname = feature;
             }
-            getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
-            getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{destname}");
-            getToggle.Name = $"FT_{destname}_IsOn";
 
-            var outputparam = oninitaction.CreateOutputParameter($"FT_{destname}");
+            var toggleName = manager.GetToggleName(destname);
+            var toggleRecord = manager.GetToggleRecord(espace.Name, destname);
+            var outputName = manager.GetFeatureToggleIsOnOutputString(destname);
+
+            getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
+            getToggle.SetArgumentValue(keyParam, toggleRecord);
+            getToggle.Name = manager.GetFeatureToggleIsOnActionString(destname);
+
+            var outputparam = oninitaction.CreateOutputParameter(toggleName);
             outputparam.DataType = espace.BooleanType;
 
             var assignVar = oninitaction.CreateNode<IAssignNode>().Below(getToggle);
-            assignVar.CreateAssignment($"FT_{destname}", $"FT_{destname}_IsOn.IsOn");
+            assignVar.CreateAssignment(toggleName, outputName);
 
             getToggle.Target = assignVar;
             end.Below(assignVar);
@@ -196,9 +203,9 @@ namespace ModelAPITest
         }
 
         private void AddToDataAction(IESpace espace, ILink l, IDataAction action, String sname, String feature)
-        { 
-            var lib = espace.References.Single(a => a.Name == "FeatureToggle_Lib");
-            var getToggleAction = (IServerActionSignature)lib.ServerActions.Single(a => a.Name == "FeatureToggle_IsOn");
+        {
+            ToggleManager manager = new ToggleManager();
+            var getToggleAction = manager.GetPlatformToggleRetrievalAction(espace);
             var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
             var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
             var start = action.GetAllDescendantsOfType<IStartNode>().Single();
@@ -212,28 +219,33 @@ namespace ModelAPITest
             {
                 destname = feature;
             }
+            var toggleName = manager.GetToggleName(destname);
+            var toggleRecord = manager.GetToggleRecord(espace.Name, destname);
+            var outputName = manager.GetFeatureToggleIsOnOutputString(destname);
+            var actionName = manager.GetFeatureToggleIsOnActionString(destname);
+
             var startTarget = start.Target;
-            var existsFeature = action.GetAllDescendantsOfType<IExecuteServerActionNode>().SingleOrDefault(s => s.Name == $"FT_{destname}_IsOn");
+            var existsFeature = action.GetAllDescendantsOfType<IExecuteServerActionNode>().SingleOrDefault(s => s.Name == actionName);
             if (existsFeature == default)
             {
                 var getToggle = action.CreateNode<IExecuteServerActionNode>().Below(start);
                 getToggle.Action = getToggleAction;
-                getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{destname}");
+                getToggle.SetArgumentValue(keyParam, toggleRecord);
                 getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
-                getToggle.Name = $"FT_{destname}_IsOn";
+                getToggle.Name = actionName;
 
-                var outputparam = action.CreateOutputParameter($"FT_{destname}");
+                var outputparam = action.CreateOutputParameter(toggleName);
                 outputparam.DataType = espace.BooleanType;
 
                 if (assign != null)
                 {
-                    assign.CreateAssignment($"FT_{destname}", $"FT_{destname}_IsOn.IsOn");
+                    assign.CreateAssignment(toggleName, outputName);
                     getToggle.Target = startTarget;
                 }
                 else
                 {
                     assign = action.CreateNode<IAssignNode>().Below(getToggle);
-                    assign.CreateAssignment($"FT_{destname}", $"FT_{destname}_IsOn.IsOn");
+                    assign.CreateAssignment(toggleName, outputName);
                     getToggle.Target = assign;
                     assign.Target = startTarget;
                 }

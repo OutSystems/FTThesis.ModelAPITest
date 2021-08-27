@@ -19,6 +19,5 @@ namespace ModelAPITest.ToggleElements
         {
             Console.WriteLine("Transformed Client Actions:");
         }
-
     }
 }

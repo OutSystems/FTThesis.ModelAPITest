@@ -12,23 +12,22 @@ using System.Text;
 
 namespace ModelAPITest.ToggleElements
 {
-    class ToggleRemoteAction
+    class FTRemoteManagementAction : ToggleActions
     {
         public IAction GetToggleAction(IESpace espace)
         {
             var action = (IServerAction)espace.ServerActions.SingleOrDefault(s => s.Name == "CreateTogglesRemote");
             if (action == default)
             {
-                return CreateToggleRemoteAction(espace);
+                return CreateToggleAction(espace);
             }
             else
             {
                 return action;
             }
-
         }
 
-        public IAction CreateToggleRemoteAction(IESpace espace)
+        private IAction CreateToggleAction(IESpace espace)
         {
             var action = espace.CreateServerAction("CreateTogglesRemote");
             action.Function = false;
@@ -41,32 +40,31 @@ namespace ModelAPITest.ToggleElements
         private void ConstructAction(IESpace espace, IAction action)
         {
             var start = action.CreateNode<IStartNode>();
-            var toggleslist = action.CreateNode<IAggregateNode>("GetFeatureToggles").Below(start); ;
+            var toggleslist = GetTogglesList(espace, action).Below(start);
             var cycle = action.CreateNode<IForEachNode>().Below(toggleslist);
-            var assign = action.CreateNode<IAssignNode>().ToTheRightOf(cycle);
-            var createaction = action.CreateNode<IExecuteServerActionNode>().Below(assign);
-            var end = action.CreateNode<IEndNode>().Below(cycle); ;
-
+            cycle.SetRecordList("GetFeatureToggles.List");
+            var assign = AssignValues(action).ToTheRightOf(cycle);
+            var createaction = CreateExecuteActionNode(espace, action).Below(assign);
+            var end = action.CreateNode<IEndNode>().Below(cycle);
             start.Target = toggleslist;
             toggleslist.Target = cycle;
             cycle.CycleTarget = assign;
             assign.Target = createaction;
             createaction.Target = cycle;
             cycle.Target = end;
+        }
 
+        private IAggregateNode GetTogglesList(IESpace espace, IAction action)
+        {
+            var toggleslist = action.CreateNode<IAggregateNode>("GetFeatureToggles");
             var entity = (IStaticEntity)espace.Entities.SingleOrDefault(s => s.Name == "FeatureToggles");
             var datatable = toggleslist.AsDatabaseAggregate.CreateSource(entity);
-            cycle.SetRecordList("GetFeatureToggles.List");
+            return toggleslist;
+        }
 
-            var res = espace.GetAllDescendantsOfType<IRestClient>().SingleOrDefault(a => a.Name == "FeatureToggleManagementAPI");
-            var createToggleAction = res.Actions.Single(a => a.Name == "CreateFeatureToggle");
-            createaction.Action = createToggleAction;
-
-            var args = createaction.Arguments.Single();
-
-            var localvar = action.CreateLocalVariable("ToggleDefinition");
-            localvar.DataType = espace.GetAllDescendantsOfType<IRestStructure>().Single(s => s.Name == "APIFeatureToggleCreateRequest");
-
+        private IAssignNode AssignValues(IAction action)
+        {
+            var assign = action.CreateNode<IAssignNode>();
             assign.CreateAssignment("ToggleDefinition.FeatureToggle.Key", "GetFeatureToggles.List.Current.FeatureToggles.Key");
             assign.CreateAssignment("ToggleDefinition.FeatureToggle.Name", "GetFeatureToggles.List.Current.FeatureToggles.Label");
             assign.CreateAssignment("ToggleDefinition.FeatureToggle.IsUnderDevelopment", "True");
@@ -76,9 +74,21 @@ namespace ModelAPITest.ToggleElements
             assign.CreateAssignment("ToggleDefinition.FeatureToggleMetadata.Owner", "GetUserId()");
             assign.CreateAssignment("ToggleDefinition.FeatureToggleMetadata.IsTemporary", "True");
             assign.CreateAssignment("ToggleDefinition.FeatureToggleMetadata.PredictedActivationDate", "CurrDate()");
+            return assign;
+        }
 
+        private IExecuteServerActionNode CreateExecuteActionNode(IESpace espace, IAction action)
+        {
+            var createaction = action.CreateNode<IExecuteServerActionNode>();
+            var res = espace.GetAllDescendantsOfType<IRestClient>().SingleOrDefault(a => a.Name == "FeatureToggleManagementAPI");
+            var createToggleAction = res.Actions.Single(a => a.Name == "CreateFeatureToggle");
+            createaction.Action = createToggleAction;
+
+            var args = createaction.Arguments.Single();
+            var localvar = action.CreateLocalVariable("ToggleDefinition");
+            localvar.DataType = espace.GetAllDescendantsOfType<IRestStructure>().Single(s => s.Name == "APIFeatureToggleCreateRequest");
             args.SetValue(localvar.Name);
-
+            return createaction;
         }
 
         private void CreateTimer(IESpace espace, ITimer timer, IAction action)

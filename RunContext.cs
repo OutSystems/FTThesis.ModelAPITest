@@ -54,12 +54,14 @@ namespace ModelAPITest
 
             var isoldtraditional = IsTraditional(module);
 
+            ToggleManager manager = new ToggleManager();
+
             if (isoldtraditional)
             {
                 BlocksTraditional traditionalBlocks = new BlocksTraditional();
                 ScreensTraditional s = new ScreensTraditional();
                 ServerAction l = new ServerAction();
-                ToggleRemoteAction t = new ToggleRemoteAction();
+                //FTRemoteManagementAction t = new FTRemoteManagementAction();
                 
                 foreach (Feature f in p.Features)
                 {
@@ -69,7 +71,7 @@ namespace ModelAPITest
                     l.GetAllElementsFromList(module, f.Elements, f.Name);
                     Console.WriteLine("-----------------------------------------");
                 }
-                t.GetToggleAction(module);
+                //t.GetToggleAction(module);
                 
             }
             else
@@ -78,7 +80,7 @@ namespace ModelAPITest
                 ScreensReactive s = new ScreensReactive();
                 ServerAction l = new ServerAction();
                 //ClientAction c = new ClientAction();
-                ToggleRemoteAction t = new ToggleRemoteAction();
+                //FTRemoteManagementAction t = new FTRemoteManagementAction();
                
                 foreach (Feature f in p.Features)
                 {
@@ -89,10 +91,11 @@ namespace ModelAPITest
                     //c.GetAllElementsFromList(module, f.Elements, f.Name);
                     Console.WriteLine("-----------------------------------------");
                 }
-                t.GetToggleAction(module);
+                //t.GetToggleAction(module);
                 
 
             }
+            manager.CreateActionToAddTogglesToMngPlat(module);
             module.Save(saveESpacePath.FullName);
             //Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
         }

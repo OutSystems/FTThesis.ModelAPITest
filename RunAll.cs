@@ -35,6 +35,8 @@ namespace ModelAPITest
 
             Console.WriteLine("----------Transformation Report----------");
 
+            ToggleManager manager = new ToggleManager();
+
             if (isoldtraditional)
             {
                 BlocksTraditional traditionalBlocks = new BlocksTraditional();
@@ -43,8 +45,8 @@ namespace ModelAPITest
                 traditionalBlocks.GetAllElements(module);
                 s.GetAllElements(module);
                 l.GetAllElements(module);
-                ToggleRemoteAction t = new ToggleRemoteAction();
-                t.GetToggleAction(module);
+                //FTRemoteManagementAction t = new FTRemoteManagementAction();
+                //t.GetToggleAction(module);
             }
             else
             {
@@ -56,10 +58,11 @@ namespace ModelAPITest
                 s.GetAllElements(module);
                 l.GetAllElements(module);
                 //c.GetAllElements(module);
-                ToggleRemoteAction t = new ToggleRemoteAction();
-                t.GetToggleAction(module);
+                //FTRemoteManagementAction t = new FTRemoteManagementAction();
+                //t.GetToggleAction(module);
 
             }
+            manager.CreateActionToAddTogglesToMngPlat(module);
             module.Save(saveESpacePath.FullName);
             //Console.WriteLine($"\nESpace saved to {saveESpacePath.FullName}");
         }

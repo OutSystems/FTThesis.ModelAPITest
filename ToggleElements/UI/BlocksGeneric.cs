@@ -16,6 +16,24 @@ namespace ModelAPITest {
         where GScreen : IScreen
         where GParent : IObjectSignature
     {
+        public void GetAllElements(IESpace newe)
+        {
+            var listBlocks = newe.GetAllDescendantsOfType<GBlock>();
+
+            List<IKey> difBlocksKeys = new List<IKey>();
+            Console.WriteLine("Transformed Blocks:");
+            foreach (GBlock block in listBlocks)
+            {
+                Console.WriteLine(block);
+                difBlocksKeys.Add(block.ObjectKey);
+
+            }
+
+            if (difBlocksKeys.Count() != 0)
+            {
+                InsertIf(newe, difBlocksKeys, "defaultfeature");
+            }
+        }
 
         public virtual void GetDiffElements(IESpace old, IESpace newe, string newOrAltered) {
             var listOldBlocks = old.GetAllDescendantsOfType<GBlock>();
@@ -59,12 +77,30 @@ namespace ModelAPITest {
            
         }
 
+        public void GetAllElementsFromList(IESpace newe, List<string> elements, String feature)
+        {
+
+            var listBlocks = newe.GetAllDescendantsOfType<GBlock>().Where(b => elements.Contains(b.Name));
+
+            List<IKey> difBlocksKeys = new List<IKey>();
+            Console.WriteLine("Transformed Blocks:");
+            foreach (GBlock block in listBlocks)
+            {
+                Console.WriteLine(block);
+                difBlocksKeys.Add(block.ObjectKey);
+
+            }
+
+            if (difBlocksKeys.Count() != 0)
+            {
+                InsertIf(newe, difBlocksKeys, feature);
+            }
+        }
+
         public virtual void InsertIf(IESpace espace, List<IKey> keys, String feature) {
             var bl = espace.GetAllDescendantsOfType<GObjectSignature>().Where(s => keys.Contains(GetObjectKey(s)));
-            ToggleEntities t = new ToggleEntities();
-            ToggleAction a = new ToggleAction();
-            var entity = t.GetTogglesEntity(espace);
-            var action = a.GetToggleAction(espace);
+            ToggleManager manager = new ToggleManager();
+            manager.GetToggleValueRetrievalAction(espace);
             foreach (GObjectSignature o in bl.ToList()) {
                 if (o.Parent is GParent) {
                     if (feature == "defaultfeature")
@@ -72,7 +108,7 @@ namespace ModelAPITest {
                         feature = GetName(o);
                     }
                     var parent = (GParent)o.Parent;
-                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
+                    var rec = manager.CreateToggleRecord(manager.GetToggleKey(espace.Name,feature), manager.GetToggleName(feature), espace);
                     EncapsulatedInIf(parent, o, espace, feature);
                     o.Delete();
                    
@@ -90,43 +126,5 @@ namespace ModelAPITest {
 
         protected abstract IKey GetObjectKey(GObjectSignature s);
 
-        public void GetAllElements(IESpace newe)
-        {
-            var listBlocks = newe.GetAllDescendantsOfType<GBlock>();
-
-            List<IKey> difBlocksKeys = new List<IKey>();
-            Console.WriteLine("Transformed Blocks:");
-            foreach (GBlock block in listBlocks)
-            {
-                Console.WriteLine(block);
-                difBlocksKeys.Add(block.ObjectKey);
-
-            }
-
-            if (difBlocksKeys.Count() != 0)
-            {
-                InsertIf(newe, difBlocksKeys, "defaultfeature");
-            }
-        }
-
-        public void GetAllElementsFromList(IESpace newe, List<string> elements, String feature)
-        {
-            
-            var listBlocks = newe.GetAllDescendantsOfType<GBlock>().Where(b => elements.Contains(b.Name));
-
-            List<IKey> difBlocksKeys = new List<IKey>();
-            Console.WriteLine("Transformed Blocks:");
-            foreach (GBlock block in listBlocks)
-            {
-                Console.WriteLine(block);
-                difBlocksKeys.Add(block.ObjectKey);
-
-            }
-
-            if (difBlocksKeys.Count() != 0)
-            {
-                InsertIf(newe, difBlocksKeys, feature);
-            }
-        }
     }
 }

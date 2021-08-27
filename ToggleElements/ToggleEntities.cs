@@ -11,7 +11,7 @@ namespace ModelAPITest.ToggleElements
     class ToggleEntities
     {
         private const string TogglesEntity = "FeatureToggles";
-        public IStaticEntity GetTogglesEntity(IESpace espace)
+        public static IStaticEntity GetTogglesEntity(IESpace espace)
         {
             var entity = (IStaticEntity)espace.Entities.SingleOrDefault(s => s.Name == TogglesEntity);
             if(entity == default) 
@@ -23,7 +23,7 @@ namespace ModelAPITest.ToggleElements
                 return entity; 
             }
         }
-        public IStaticEntity CreateEntity(IESpace espace)
+        public static IStaticEntity CreateEntity(IESpace espace)
         {
             var entity = espace.CreateStaticEntity(TogglesEntity);
             var keyatt = entity.CreateAttribute("Key");
@@ -42,7 +42,7 @@ namespace ModelAPITest.ToggleElements
             return entity;
         }
 
-        public IRecord CreateRecord(IStaticEntity entity, String key, String label, IESpace espace)
+        public static IRecord CreateRecord(IStaticEntity entity, String key, String label)
         {
             IEntityAttribute GetAttribute(string name) => entity.Attributes.Single(a => a.Name == name);
             var rec = entity.Records;

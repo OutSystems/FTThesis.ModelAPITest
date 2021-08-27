@@ -25,7 +25,12 @@ namespace ModelAPITest {
 
         protected override void EncapsulatedInIf(IPlaceholderContentWidget p, IMobileBlockInstanceWidget o, IESpace espace, String feature)
         {
+            ToggleManager manager = new ToggleManager();
             var name = GetName(o);
+            var actionName = manager.GetFeatureToggleIsOnActionString(feature);
+            var outputName = manager.GetFeatureToggleIsOnOutputString(feature);
+            var toggleName = manager.GetToggleName(feature);
+            var toggleRecord = manager.GetToggleRecord(espace.Name, feature);
             var screens = espace.GetAllDescendantsOfType<IMobileScreen>();
             foreach (IMobileScreen s in screens)
             {
@@ -33,50 +38,49 @@ namespace ModelAPITest {
                 if (exists != default)
                 {
                     var action = s.GetAllDescendantsOfType<IDataAction>().SingleOrDefault(e => e.Name == "GetToggles");
-                    var lib = espace.References.Single(a => a.Name == "FeatureToggle_Lib");
-                    var getToggleAction = (IServerActionSignature)lib.ServerActions.Single(a => a.Name == "FeatureToggle_IsOn");
+                    var getToggleAction = manager.GetPlatformToggleRetrievalAction(espace);
                     if (action == default)
                     {
                         var oninitaction = s.CreateDataAction();
                         oninitaction.Name = "GetToggles";
                         var out1 = oninitaction.GetAllDescendantsOfType<IOutputParameter>().SingleOrDefault(o => o.Name == "Out1");
                         out1.Delete();
-                        var outputparam = oninitaction.CreateOutputParameter($"FT_{feature}");
+                        var outputparam = oninitaction.CreateOutputParameter(toggleName);
                         outputparam.DataType = espace.BooleanType;
                         var start = oninitaction.CreateNode<IStartNode>();
-                        var getToggle = oninitaction.CreateNode<IExecuteServerActionNode>($"FT_{feature}_IsOn").Below(start);
+                        var getToggle = oninitaction.CreateNode<IExecuteServerActionNode>(actionName).Below(start);
                         var assignVar = oninitaction.CreateNode<IAssignNode>().Below(getToggle);
                         var end = oninitaction.CreateNode<IEndNode>().Below(assignVar);
 
                         getToggle.Action = getToggleAction;
                         var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
-                        getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{feature}");
+                        getToggle.SetArgumentValue(keyParam, toggleRecord);
                         var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
                         getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
                         start.Target = getToggle;
 
-                        assignVar.CreateAssignment($"FT_{feature}", $"FT_{feature}_IsOn.IsOn");
+                        assignVar.CreateAssignment(toggleName, outputName);
                         getToggle.Target = assignVar;
                         assignVar.Target = end;
 
                     }
                     else
                     {
-                        var existsFeature = action.GetAllDescendantsOfType<IExecuteServerActionNode>().SingleOrDefault(s => s.Name == $"FT_{feature}_IsOn");
+                        var existsFeature = action.GetAllDescendantsOfType<IExecuteServerActionNode>().SingleOrDefault(s => s.Name == actionName);
                         if (existsFeature == default)
                         {
-                            var outputparam = action.CreateOutputParameter($"FT_{feature}");
+                            var outputparam = action.CreateOutputParameter(toggleName);
                             outputparam.DataType = espace.BooleanType;
                             var start = action.GetAllDescendantsOfType<IStartNode>().Single();
                             var assign = action.GetAllDescendantsOfType<IAssignNode>().Single();
-                            var getToggle = action.CreateNode<IExecuteServerActionNode>($"FT_{feature}_IsOn").Below(start);
+                            var getToggle = action.CreateNode<IExecuteServerActionNode>(actionName).Below(start);
                             getToggle.Action = getToggleAction;
                             var keyParam = getToggleAction.InputParameters.Single(s => s.Name == "FeatureToggleKey");
-                            getToggle.SetArgumentValue(keyParam, $"Entities.FeatureToggles.FT_{espace.Name}_{feature}");
+                            getToggle.SetArgumentValue(keyParam, toggleRecord);
                             var modParam = getToggleAction.InputParameters.Single(s => s.Name == "ModuleName");
                             getToggle.SetArgumentValue(modParam, "GetEntryEspaceName()");
                             var startTarget = start.Target;
-                            assign.CreateAssignment($"FT_{feature}", $"FT_{feature}_IsOn.IsOn");
+                            assign.CreateAssignment(toggleName, outputName);
                             getToggle.Target = startTarget;
                             start.Target = getToggle;
                         }
@@ -85,7 +89,7 @@ namespace ModelAPITest {
             }
             var instanceIf = p.CreateWidget<IIfWidget>();
             instanceIf.SetCondition($"GetToggles.IsDataFetched and GetToggles.FT_{feature}");
-            instanceIf.Name = $"If_FT_{feature}_{name}";
+            instanceIf.Name = manager.GetIfWidgetName(feature,name);
             instanceIf.TrueBranch.Copy(o);
         }
     }

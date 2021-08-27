@@ -111,10 +111,10 @@ namespace ModelAPITest
         {
             var links = espace.GetAllDescendantsOfType<GLink>().Where(s => keys.Contains(GetDestination(s).ObjectKey));
             links = InsertIfplus(espace, keys, links);
-            ToggleEntities t = new ToggleEntities();
-            ToggleAction a = new ToggleAction(); 
-            var entity = t.GetTogglesEntity(espace);
-            var action = a.GetToggleAction(espace);
+            ToggleManager manager = new ToggleManager();
+            //FTValueRetrievalAction a = new FTValueRetrievalAction(); 
+            //var entity = manager.GetTogglesEntity(espace);
+            var action = manager.GetToggleValueRetrievalAction(espace);
             foreach (GLink l in links.ToList())
             {
                 if (feature == "defaultfeature")
@@ -124,14 +124,14 @@ namespace ModelAPITest
                 if (l.Parent is GParent1)
                 {
                     var parent = (GParent1)l.Parent;
-                    var rec = t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
+                    var rec = manager.CreateToggleRecord(manager.GetToggleKey(espace.Name, feature), manager.GetToggleName(feature), espace);
 
                     EncapsulatedInIf(parent, l, espace, feature);
                 }
                 else if (l.Parent is GParent2)
                 {
                     var parent = (GParent2)l.Parent;
-                    var rec =t.CreateRecord(entity, $"FT_{espace.Name}_{feature}", $"FT_{feature}", espace);
+                    var rec =manager.CreateToggleRecord(manager.GetToggleKey(espace.Name, feature), manager.GetToggleName(feature), espace);
 
                     EncapsulatedInIf2(parent, l, espace, feature);
                 }

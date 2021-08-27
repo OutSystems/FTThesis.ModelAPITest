@@ -21,11 +21,11 @@ namespace ModelAPITest
 
         protected override void EncapsulatedInIf(IPlaceholderContentWidget p, IWebBlockInstanceWidget o, IESpace eSpace, String feature)
         {
-            ToggleAction a = new ToggleAction();
-            var action = a.GetToggleAction(eSpace);
+            ToggleManager manager = new ToggleManager();
+            manager.GetToggleValueRetrievalAction(eSpace);
             var instanceIf = p.CreateWidget<IIfWidget>();
-            instanceIf.SetCondition($"GetFTValue(Entities.FeatureToggles.FT_{eSpace.Name}_{feature})");
-            instanceIf.Name = $"If_FT_{feature}_{GetName(o)}";
+            instanceIf.SetCondition(manager.GetToggleValueRetrievalActionString(eSpace.Name, feature));
+            instanceIf.Name = manager.GetIfWidgetName(feature, GetName(o));
             instanceIf.TrueBranch.Copy(o);
         }
     }
